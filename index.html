@@ -5,1477 +5,1043 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, maximum-scale=1.0">
 <title>路亚助手</title>
 <style>
-* { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+:root{
+  --bg:#0f1419;--bg2:#161b22;--bg-card:rgba(255,255,255,0.06);--bg-card2:rgba(255,255,255,0.09);
+  --bg-hover:rgba(255,255,255,0.12);--border:rgba(255,255,255,0.08);--border2:rgba(255,255,255,0.15);
+  --text:#e8eaed;--text2:rgba(255,255,255,0.55);--text3:rgba(255,255,255,0.3);
+  --green:#34d399;--green-bg:rgba(52,211,153,0.12);--green-dim:rgba(52,211,153,0.6);
+  --yellow:#fbbf24;--yellow-bg:rgba(251,191,36,0.12);
+  --orange:#fb923c;--red:#f87171;--red-bg:rgba(248,113,113,0.1);
+  --blue:#60a5fa;--blue-bg:rgba(96,165,250,0.12);
+  --purple:#a78bfa;--purple-bg:rgba(167,139,250,0.12);
+  --r:14px;--rs:10px
+}
+body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text','Helvetica Neue',sans-serif;background:var(--bg);color:var(--text);max-width:430px;margin:0 auto;min-height:100vh;overflow-x:hidden;-webkit-font-smoothing:antialiased}
 
-:root {
-  --bg: #0f1419;
-  --bg-card: rgba(255,255,255,0.06);
-  --bg-card-hover: rgba(255,255,255,0.1);
-  --bg-glass: rgba(255,255,255,0.08);
-  --border: rgba(255,255,255,0.08);
-  --text: #e8eaed;
-  --text-secondary: rgba(255,255,255,0.5);
-  --text-hint: rgba(255,255,255,0.3);
-  --green: #34d399;
-  --green-bg: rgba(52,211,153,0.12);
-  --green-dim: rgba(52,211,153,0.6);
-  --yellow: #fbbf24;
-  --yellow-bg: rgba(251,191,36,0.12);
-  --orange: #fb923c;
-  --red: #f87171;
-  --blue: #60a5fa;
-  --blue-bg: rgba(96,165,250,0.12);
-  --accent: #34d399;
-  --tab-bg: rgba(15,20,25,0.95);
-  --radius: 14px;
-  --radius-sm: 10px;
-}
+.header{position:sticky;top:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:14px 20px;background:rgba(15,20,25,0.88);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid var(--border)}
+.header h1{font-size:17px;font-weight:600;letter-spacing:.3px}
+.hbtn{width:36px;height:36px;border-radius:50%;background:var(--bg-card);border:none;color:var(--text);font-size:16px;display:flex;align-items:center;justify-content:center;cursor:pointer}
+.hbtn:active{background:var(--bg-hover)}
 
-body {
-  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Helvetica Neue', sans-serif;
-  background: var(--bg);
-  color: var(--text);
-  max-width: 430px;
-  margin: 0 auto;
-  min-height: 100vh;
-  overflow-x: hidden;
-  -webkit-font-smoothing: antialiased;
-}
+.page{display:none;padding-bottom:90px}.page.active{display:block}
+.pc{padding:16px 20px}
 
-/* Header */
-.header {
-  position: sticky;
-  top: 0;
-  z-index: 100;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 16px 20px;
-  background: rgba(15,20,25,0.85);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border-bottom: 1px solid var(--border);
-}
-.header h1 {
-  font-size: 17px;
-  font-weight: 600;
-  letter-spacing: 0.5px;
-}
-.header-btn {
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  background: var(--bg-card);
-  border: none;
-  color: var(--text);
-  font-size: 16px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: background 0.2s;
-}
-.header-btn:active { background: var(--bg-card-hover); }
+.tab-bar{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:430px;display:flex;background:rgba(15,20,25,0.95);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border-top:1px solid var(--border);padding:6px 0 calc(6px + env(safe-area-inset-bottom));z-index:200}
+.tab{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:5px 0;background:none;border:none;color:var(--text3);font-size:10px;cursor:pointer;transition:color .2s}
+.tab.active{color:var(--green)}
+.tab-icon{font-size:20px;line-height:1}.tab-label{font-weight:500}
 
-/* Page containers */
-.page { display: none; padding-bottom: 100px; }
-.page.active { display: block; }
-.page-content { padding: 16px 20px; }
+.slabel{font-size:13px;color:var(--text2);margin-bottom:12px;font-weight:500;letter-spacing:.3px}
+.chip-grid{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:20px}
+.chip{padding:9px 16px;border-radius:20px;background:var(--bg-card);border:1.5px solid var(--border);color:var(--text2);font-size:13px;font-weight:500;cursor:pointer;transition:all .2s;user-select:none}
+.chip:active{transform:scale(.96)}.chip.sel{background:var(--green-bg);border-color:var(--green);color:var(--green)}
+.divider{height:1px;background:var(--border);margin:8px 0 20px}
 
-/* Bottom Tab Bar */
-.tab-bar {
-  position: fixed;
-  bottom: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 100%;
-  max-width: 430px;
-  display: flex;
-  background: var(--tab-bg);
-  backdrop-filter: blur(24px);
-  -webkit-backdrop-filter: blur(24px);
-  border-top: 1px solid var(--border);
-  padding: 8px 0 calc(8px + env(safe-area-inset-bottom));
-  z-index: 200;
-}
-.tab {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 4px;
-  padding: 6px 0;
-  background: none;
-  border: none;
-  color: var(--text-hint);
-  font-size: 10px;
-  cursor: pointer;
-  transition: color 0.2s;
-}
-.tab.active { color: var(--accent); }
-.tab-icon { font-size: 22px; line-height: 1; }
-.tab-label { font-weight: 500; }
+/* Equip cards */
+.eq-list{display:flex;flex-direction:column;gap:1px;margin-bottom:16px;border-radius:var(--r);overflow:hidden}
+.eq-card{display:flex;align-items:center;padding:14px 16px;background:var(--bg-card);cursor:pointer;transition:background .2s}
+.eq-card:active{background:var(--bg-hover)}
+.eq-icon{font-size:18px;margin-right:12px;flex-shrink:0}
+.eq-info{flex:1;min-width:0}.eq-label{font-size:11px;color:var(--text3);margin-bottom:2px}
+.eq-val{font-size:14px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.eq-brand{font-size:11px;color:var(--text3);margin-top:2px}
+.eq-arr{color:var(--text3);font-size:16px;margin-left:8px;flex-shrink:0}
 
-/* Section Label */
-.section-label {
-  font-size: 13px;
-  color: var(--text-secondary);
-  margin-bottom: 12px;
-  font-weight: 500;
-  letter-spacing: 0.5px;
-}
+.mode-sw{display:flex;background:var(--bg-card);border-radius:var(--rs);padding:3px;margin-bottom:14px}
+.mode-btn{flex:1;padding:9px;border:none;border-radius:8px;background:transparent;color:var(--text2);font-size:13px;font-weight:500;cursor:pointer;transition:all .25s}
+.mode-btn.active{background:var(--green-bg);color:var(--green)}
+.hint{display:flex;align-items:flex-start;gap:8px;padding:12px 14px;background:var(--bg-card);border-radius:var(--rs);font-size:12px;color:var(--text2);line-height:1.5}
 
-/* Chip Grid */
-.chip-grid {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  margin-bottom: 24px;
-}
-.chip {
-  padding: 10px 18px;
-  border-radius: 20px;
-  background: var(--bg-card);
-  border: 1.5px solid var(--border);
-  color: var(--text-secondary);
-  font-size: 14px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.2s;
-  user-select: none;
-}
-.chip:active { transform: scale(0.96); }
-.chip.selected {
-  background: var(--green-bg);
-  border-color: var(--green);
-  color: var(--green);
-}
+/* Score */
+.score-sec{display:flex;flex-direction:column;align-items:center;padding:28px 0 20px}
+.score-ring{position:relative;width:170px;height:170px}
+.score-ring svg{transform:rotate(-90deg)}
+.sr-bg{fill:none;stroke:var(--bg-card);stroke-width:8}
+.sr-fill{fill:none;stroke-width:8;stroke-linecap:round;transition:stroke-dashoffset 1s ease,stroke .5s}
+.score-center{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center}
+.score-num{font-size:48px;font-weight:700;letter-spacing:-2px;line-height:1}
+.score-txt{font-size:13px;margin-top:6px;font-weight:500}
 
-/* Divider */
-.divider {
-  height: 1px;
-  background: var(--border);
-  margin: 8px 0 24px;
-}
+.loc-bar{padding:0 0 16px}
+.loc-main{display:flex;align-items:center;gap:8px;margin-bottom:4px}
+.loc-name{font-size:14px;font-weight:500}
+.loc-change{background:var(--bg-card);border:1px solid var(--border);color:var(--text2);font-size:11px;padding:4px 10px;border-radius:12px;cursor:pointer;margin-left:auto}
+.loc-meta{display:flex;gap:14px;font-size:11px;color:var(--text3);padding-left:24px}
 
-/* Equipment Cards */
-.equip-list { display: flex; flex-direction: column; gap: 1px; margin-bottom: 20px; border-radius: var(--radius); overflow: hidden; }
-.equip-card {
-  display: flex;
-  align-items: center;
-  padding: 16px;
-  background: var(--bg-glass);
-  backdrop-filter: blur(10px);
-  cursor: pointer;
-  transition: background 0.2s;
-}
-.equip-card:active { background: var(--bg-card-hover); }
-.equip-icon { font-size: 20px; margin-right: 14px; flex-shrink: 0; }
-.equip-info { flex: 1; }
-.equip-label { font-size: 12px; color: var(--text-secondary); margin-bottom: 2px; }
-.equip-value { font-size: 15px; font-weight: 500; }
-.equip-arrow { color: var(--text-hint); font-size: 18px; margin-left: 8px; }
+.data-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px}
+.dcard{background:var(--bg-card);border-radius:var(--rs);padding:12px}
+.dcard.full{grid-column:1/-1}
+.dcard-icon{font-size:13px;margin-bottom:4px}
+.dcard-label{font-size:11px;color:var(--text2);margin-bottom:3px}
+.dcard-val{font-size:17px;font-weight:600}
+.dcard-val.sm{font-size:14px}
 
-/* Mode Switch */
-.mode-switch {
-  display: flex;
-  background: var(--bg-card);
-  border-radius: 10px;
-  padding: 3px;
-  margin-bottom: 16px;
-}
-.mode-btn {
-  flex: 1;
-  padding: 10px;
-  border: none;
-  border-radius: 8px;
-  background: transparent;
-  color: var(--text-secondary);
-  font-size: 14px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.25s;
-}
-.mode-btn.active {
-  background: var(--green-bg);
-  color: var(--green);
-}
+.exp-sec{background:var(--bg-card);border-radius:var(--rs);margin-bottom:10px;overflow:hidden}
+.exp-hd{display:flex;align-items:center;justify-content:space-between;padding:12px 14px;cursor:pointer;font-size:13px;font-weight:500;color:var(--text2)}
+.exp-arr{transition:transform .3s;font-size:11px}
+.exp-sec.open .exp-arr{transform:rotate(180deg)}
+.exp-body{max-height:0;overflow:hidden;transition:max-height .3s ease}
+.exp-inner{padding:0 14px 12px;font-size:12px;color:var(--text2);line-height:1.8}
 
-/* Hint */
-.hint {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 12px 16px;
-  background: var(--bg-card);
-  border-radius: var(--radius-sm);
-  font-size: 13px;
-  color: var(--text-secondary);
-}
-.hint-icon { font-size: 16px; }
+.fc-link{display:flex;align-items:center;justify-content:space-between;padding:14px;background:var(--bg-card);border-radius:var(--rs);color:var(--text2);font-size:13px;font-weight:500;transition:background .2s}
+.fc-link:active{background:var(--bg-hover)}
+.fc-link.dis{opacity:.4;pointer-events:none}
 
-/* ===== Page 2: 开口期 ===== */
-.score-section {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 32px 0 24px;
-}
-.score-ring {
-  position: relative;
-  width: 180px;
-  height: 180px;
-}
-.score-ring svg { transform: rotate(-90deg); }
-.score-ring-bg { fill: none; stroke: var(--bg-card); stroke-width: 8; }
-.score-ring-fill { fill: none; stroke-width: 8; stroke-linecap: round; transition: stroke-dashoffset 1s ease, stroke 0.5s; }
-.score-center {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  text-align: center;
-}
-.score-number {
-  font-size: 52px;
-  font-weight: 700;
-  letter-spacing: -2px;
-  line-height: 1;
-}
-.score-label {
-  font-size: 14px;
-  margin-top: 8px;
-  font-weight: 500;
-}
+/* ===== Map Page ===== */
+.map-container{position:relative;width:100%;height:240px;background:#1a2332;overflow:hidden}
+.map-bg{width:100%;height:100%;object-fit:cover;opacity:.6}
+.map-overlay{position:absolute;inset:0;display:flex;align-items:center;justify-content:center}
+.map-pins{position:absolute;inset:0}
+.map-pin{position:absolute;display:flex;flex-direction:column;align-items:center;cursor:pointer;transition:transform .2s}
+.map-pin:active{transform:scale(1.2)}
+.pin-dot{width:14px;height:14px;border-radius:50%;border:2px solid rgba(0,0,0,0.3)}
+.pin-label{font-size:10px;color:#fff;text-shadow:0 1px 3px rgba(0,0,0,0.8);margin-top:2px;white-space:nowrap;font-weight:600}
+.pin-green .pin-dot{background:#34d399}
+.pin-blue .pin-dot{background:#60a5fa}
+.pin-orange .pin-dot{background:#fb923c}
+.pin-red .pin-dot{background:#f87171}
 
-/* Location bar */
-.location-bar {
-  padding: 0 0 20px;
-}
-.location-main {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin-bottom: 6px;
-}
-.location-pin { font-size: 16px; }
-.location-name { font-size: 15px; font-weight: 500; }
-.location-change {
-  background: var(--bg-card);
-  border: none;
-  color: var(--text-secondary);
-  font-size: 12px;
-  padding: 4px 10px;
-  border-radius: 12px;
-  cursor: pointer;
-  margin-left: auto;
-}
-.location-meta {
-  display: flex;
-  gap: 16px;
-  font-size: 12px;
-  color: var(--text-hint);
-  padding-left: 24px;
-}
+.legend{display:flex;gap:14px;padding:10px 20px;font-size:11px;color:var(--text2)}
+.legend-item{display:flex;align-items:center;gap:4px}
+.legend-dot{width:8px;height:8px;border-radius:50%}
 
-/* Data cards */
-.data-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 10px;
-  margin-bottom: 16px;
-}
-.data-card {
-  background: var(--bg-glass);
-  border-radius: var(--radius-sm);
-  padding: 14px;
-  backdrop-filter: blur(10px);
-}
-.data-card.full { grid-column: 1 / -1; }
-.data-icon { font-size: 14px; margin-bottom: 6px; }
-.data-label { font-size: 11px; color: var(--text-secondary); margin-bottom: 4px; }
-.data-value { font-size: 18px; font-weight: 600; }
-.data-value.small { font-size: 15px; }
+.time-tabs{display:flex;gap:8px;padding:0 20px 12px}
+.time-tab{padding:6px 14px;border-radius:14px;background:var(--bg-card);border:1px solid var(--border);color:var(--text2);font-size:12px;cursor:pointer}
+.time-tab.active{background:var(--green-bg);border-color:var(--green);color:var(--green)}
 
-/* Expand section */
-.expand-section {
-  background: var(--bg-card);
-  border-radius: var(--radius-sm);
-  margin-bottom: 12px;
-  overflow: hidden;
-}
-.expand-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 14px 16px;
-  cursor: pointer;
-  font-size: 14px;
-  font-weight: 500;
-  color: var(--text-secondary);
-}
-.expand-arrow {
-  transition: transform 0.3s;
-  font-size: 12px;
-}
-.expand-section.open .expand-arrow { transform: rotate(180deg); }
-.expand-body {
-  max-height: 0;
-  overflow: hidden;
-  transition: max-height 0.3s ease;
-}
-.expand-body-inner {
-  padding: 0 16px 14px;
-  font-size: 13px;
-  color: var(--text-secondary);
-  line-height: 1.8;
-}
+.spot-list{padding:0 20px}
+.spot-card{background:var(--bg-card);border-radius:var(--r);padding:14px;margin-bottom:10px;cursor:pointer;transition:background .2s}
+.spot-card:active{background:var(--bg-hover)}
+.spot-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.spot-name{font-size:15px;font-weight:600}
+.spot-badge{font-size:11px;padding:3px 8px;border-radius:8px;font-weight:500}
+.spot-stats{display:flex;gap:16px;font-size:12px;color:var(--text2)}
+.spot-fish-tags{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap}
+.spot-fish-tag{font-size:11px;padding:3px 8px;border-radius:6px;background:var(--blue-bg);color:var(--blue)}
 
-/* Forecast link */
-.forecast-link {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 16px;
-  background: var(--bg-card);
-  border-radius: var(--radius-sm);
-  cursor: pointer;
-  color: var(--text-secondary);
-  font-size: 14px;
-  font-weight: 500;
-  transition: background 0.2s;
-}
-.forecast-link:active { background: var(--bg-card-hover); }
-.forecast-link .arrow { font-size: 16px; }
-.forecast-link.disabled { opacity: 0.4; pointer-events: none; }
+/* Spot detail */
+.spot-detail{position:fixed;inset:0;background:var(--bg);z-index:250;display:none;flex-direction:column;max-width:430px;margin:0 auto;overflow-y:auto}
+.spot-detail.show{display:flex}
+.spot-hero{padding:20px;background:linear-gradient(135deg,rgba(52,211,153,0.08),rgba(96,165,250,0.08))}
+.spot-hero-name{font-size:20px;font-weight:700;margin-bottom:4px}
+.spot-hero-loc{font-size:13px;color:var(--text2);margin-bottom:12px}
+.spot-hero-stats{display:flex;gap:20px}
+.spot-stat{text-align:center}
+.spot-stat-num{font-size:22px;font-weight:700;color:var(--green)}
+.spot-stat-label{font-size:11px;color:var(--text2)}
+.spot-official{margin:0 20px 12px;padding:14px;background:var(--green-bg);border-radius:var(--rs);border:1px solid rgba(52,211,153,0.2)}
+.spot-official-title{font-size:12px;color:var(--green);font-weight:600;margin-bottom:8px}
+.spot-official-items{display:flex;flex-wrap:wrap;gap:6px}
+.spot-official-item{font-size:12px;padding:4px 10px;border-radius:8px;background:rgba(52,211,153,0.08);color:var(--text)}
+.catch-section-title{padding:0 20px;margin-bottom:10px;font-size:13px;color:var(--text2);font-weight:500}
 
-/* ===== Page 3: 记录本 ===== */
-.search-bar {
-  position: relative;
-  margin-bottom: 16px;
-}
-.search-bar input {
-  width: 100%;
-  padding: 12px 16px 12px 40px;
-  background: var(--bg-card);
-  border: 1.5px solid var(--border);
-  border-radius: 12px;
-  color: var(--text);
-  font-size: 14px;
-  outline: none;
-  transition: border-color 0.2s;
-}
-.search-bar input::placeholder { color: var(--text-hint); }
-.search-bar input:focus { border-color: rgba(255,255,255,0.2); }
-.search-bar .search-icon {
-  position: absolute;
-  left: 14px;
-  top: 50%;
-  transform: translateY(-50%);
-  font-size: 15px;
-  color: var(--text-hint);
-}
+/* Catch card */
+.catch-card{margin:0 20px 12px;background:var(--bg-card);border-radius:var(--r);overflow:hidden}
+.catch-main{display:flex;padding:14px}
+.catch-photo{width:80px;height:80px;border-radius:var(--rs);background:var(--bg-card2);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:32px;overflow:hidden}
+.catch-info{flex:1;margin-left:12px;min-width:0}
+.catch-user{display:flex;align-items:center;gap:6px;margin-bottom:4px}
+.catch-avatar{width:20px;height:20px;border-radius:50%;background:var(--bg-hover);display:flex;align-items:center;justify-content:center;font-size:10px}
+.catch-uname{font-size:12px;color:var(--text2)}
+.catch-time{font-size:11px;color:var(--text3);margin-left:auto}
+.catch-fish{font-size:15px;font-weight:600;margin-bottom:2px}
+.catch-weight{font-size:12px;color:var(--green)}
+.catch-equip{display:flex;flex-wrap:wrap;gap:4px;margin-top:8px}
+.catch-equip-tag{font-size:10px;padding:3px 7px;border-radius:5px;background:var(--purple-bg);color:var(--purple)}
+.catch-footer{display:flex;align-items:center;padding:8px 14px;border-top:1px solid var(--border);gap:16px}
+.catch-action{font-size:12px;color:var(--text3);cursor:pointer;display:flex;align-items:center;gap:4px}
+.catch-action:active{color:var(--text2)}
 
-/* Record cards */
-.record-list { display: flex; flex-direction: column; gap: 12px; }
-.record-card {
-  display: flex;
-  gap: 14px;
-  padding: 14px;
-  background: var(--bg-glass);
-  border-radius: var(--radius);
-  cursor: pointer;
-  transition: background 0.2s;
-  backdrop-filter: blur(10px);
-}
-.record-card:active { background: var(--bg-card-hover); }
-.record-thumb {
-  width: 72px;
-  height: 72px;
-  border-radius: 10px;
-  background: var(--bg-card);
-  flex-shrink: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 28px;
-  overflow: hidden;
-}
-.record-thumb img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-.record-info { flex: 1; min-width: 0; }
-.record-title {
-  font-size: 15px;
-  font-weight: 500;
-  margin-bottom: 4px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-.record-date { font-size: 12px; color: var(--text-hint); margin-bottom: 6px; }
-.record-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 6px; }
-.record-tag {
-  font-size: 11px;
-  color: var(--green-dim);
-  background: var(--green-bg);
-  padding: 2px 8px;
-  border-radius: 6px;
-}
-.record-fish { font-size: 13px; color: var(--text-secondary); }
+/* Comments */
+.comments-section{margin:0 20px 20px;background:var(--bg-card);border-radius:var(--r);overflow:hidden}
+.comment-item{padding:12px 14px;border-bottom:1px solid var(--border)}
+.comment-item:last-child{border-bottom:none}
+.comment-top{display:flex;align-items:center;gap:6px;margin-bottom:4px}
+.comment-avatar{width:18px;height:18px;border-radius:50%;background:var(--bg-hover);display:flex;align-items:center;justify-content:center;font-size:9px}
+.comment-name{font-size:12px;color:var(--text2)}
+.comment-time{font-size:10px;color:var(--text3);margin-left:auto}
+.comment-text{font-size:13px;line-height:1.6;color:var(--text)}
+.comment-input-bar{position:sticky;bottom:0;display:flex;gap:8px;padding:12px 20px;background:rgba(15,20,25,0.95);backdrop-filter:blur(20px);border-top:1px solid var(--border)}
+.comment-input{flex:1;padding:10px 14px;background:var(--bg-card);border:1px solid var(--border);border-radius:20px;color:var(--text);font-size:13px;outline:none}
+.comment-input::placeholder{color:var(--text3)}
+.comment-send{padding:10px 16px;background:var(--green);border:none;border-radius:20px;color:var(--bg);font-size:13px;font-weight:600;cursor:pointer}
+.comment-send:active{opacity:.8}
 
-/* Empty state */
-.empty-state {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 60px 20px;
-  text-align: center;
-}
-.empty-icon { font-size: 48px; margin-bottom: 16px; opacity: 0.3; }
-.empty-text { font-size: 14px; color: var(--text-hint); line-height: 1.6; }
+/* Record */
+.search-bar{position:relative;margin-bottom:14px}
+.search-bar input{width:100%;padding:11px 16px 11px 38px;background:var(--bg-card);border:1.5px solid var(--border);border-radius:12px;color:var(--text);font-size:13px;outline:none}
+.search-bar input::placeholder{color:var(--text3)}
+.search-bar .si{position:absolute;left:13px;top:50%;transform:translateY(-50%);font-size:14px;color:var(--text3)}
 
-/* FAB */
-.fab {
-  position: fixed;
-  bottom: calc(76px + env(safe-area-inset-bottom));
-  right: calc(50% - 195px);
-  width: 52px;
-  height: 52px;
-  border-radius: 16px;
-  background: var(--green);
-  border: none;
-  color: var(--bg);
-  font-size: 26px;
-  font-weight: 300;
-  display: none;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  box-shadow: 0 4px 20px rgba(52,211,153,0.35);
-  transition: transform 0.2s, box-shadow 0.2s;
-  z-index: 150;
-}
-.fab:active { transform: scale(0.92); }
-.fab.show { display: flex; }
+.rec-list{display:flex;flex-direction:column;gap:10px}
+.rec-card{display:flex;gap:12px;padding:12px;background:var(--bg-card);border-radius:var(--r);cursor:pointer;transition:background .2s}
+.rec-card:active{background:var(--bg-hover)}
+.rec-thumb{width:68px;height:68px;border-radius:var(--rs);background:var(--bg-card2);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:26px}
+.rec-info{flex:1;min-width:0}
+.rec-title{font-size:14px;font-weight:500;margin-bottom:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.rec-date{font-size:11px;color:var(--text3);margin-bottom:5px}
+.rec-tags{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:4px}
+.rec-tag{font-size:10px;color:var(--green-dim);background:var(--green-bg);padding:2px 7px;border-radius:5px}
+.rec-fish{font-size:12px;color:var(--text2)}
 
-/* Modal overlay */
-.modal-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,0.6);
-  z-index: 300;
-  display: none;
-  align-items: flex-end;
-  justify-content: center;
-}
-.modal-overlay.show { display: flex; }
-.modal {
-  background: #1a1f26;
-  border-radius: 20px 20px 0 0;
-  width: 100%;
-  max-width: 430px;
-  max-height: 70vh;
-  overflow-y: auto;
-  padding: 20px;
-  transform: translateY(100%);
-  transition: transform 0.3s ease;
-}
-.modal-overlay.show .modal { transform: translateY(0); }
-.modal-handle {
-  width: 36px;
-  height: 4px;
-  background: rgba(255,255,255,0.2);
-  border-radius: 2px;
-  margin: 0 auto 16px;
-}
-.modal h3 {
-  font-size: 16px;
-  font-weight: 600;
-  margin-bottom: 16px;
-  text-align: center;
-}
-.modal-option {
-  display: flex;
-  align-items: center;
-  padding: 14px 16px;
-  border-radius: 10px;
-  cursor: pointer;
-  transition: background 0.2s;
-  margin-bottom: 4px;
-}
-.modal-option:active { background: var(--bg-card-hover); }
-.modal-option.selected { background: var(--green-bg); }
-.modal-radio {
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  border: 2px solid var(--text-hint);
-  margin-right: 14px;
-  flex-shrink: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-.modal-option.selected .modal-radio {
-  border-color: var(--green);
-  background: var(--green);
-}
-.modal-option.selected .modal-radio::after {
-  content: '';
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: var(--bg);
-}
-.modal-option-text { font-size: 14px; }
-.modal-option-tag {
-  font-size: 11px;
-  color: var(--green);
-  background: var(--green-bg);
-  padding: 2px 8px;
-  border-radius: 6px;
-  margin-left: auto;
-}
-.modal-cancel {
-  width: 100%;
-  padding: 14px;
-  margin-top: 12px;
-  background: var(--bg-card);
-  border: none;
-  border-radius: 12px;
-  color: var(--text-secondary);
-  font-size: 15px;
-  font-weight: 500;
-  cursor: pointer;
-}
+.fab{position:fixed;bottom:calc(72px + env(safe-area-inset-bottom));right:calc(50% - 190px);width:50px;height:50px;border-radius:15px;background:var(--green);border:none;color:var(--bg);font-size:24px;font-weight:300;display:none;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 4px 20px rgba(52,211,153,0.35);z-index:150}
+.fab:active{transform:scale(.92)}.fab.show{display:flex}
 
-/* Record detail modal */
-.detail-page {
-  position: fixed;
-  inset: 0;
-  background: var(--bg);
-  z-index: 250;
-  display: none;
-  flex-direction: column;
-  max-width: 430px;
-  margin: 0 auto;
-  overflow-y: auto;
-}
-.detail-page.show { display: flex; }
-.detail-photo {
-  width: 100%;
-  aspect-ratio: 4/3;
-  background: var(--bg-card);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 48px;
-}
-.detail-content { padding: 20px; }
-.detail-location { font-size: 16px; font-weight: 600; margin-bottom: 6px; }
-.detail-meta { font-size: 13px; color: var(--text-secondary); margin-bottom: 4px; }
-.detail-tags { display: flex; flex-wrap: wrap; gap: 6px; margin: 16px 0; }
-.detail-row {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 10px 0;
-  font-size: 14px;
-  border-bottom: 1px solid var(--border);
-}
-.detail-row-icon { font-size: 16px; width: 24px; text-align: center; }
-.detail-note {
-  margin-top: 16px;
-  padding: 14px;
-  background: var(--bg-card);
-  border-radius: var(--radius-sm);
-  font-size: 14px;
-  line-height: 1.7;
-  color: var(--text-secondary);
-}
-.detail-delete {
-  margin-top: 24px;
-  width: 100%;
-  padding: 14px;
-  background: rgba(248,113,113,0.1);
-  border: none;
-  border-radius: 12px;
-  color: var(--red);
-  font-size: 14px;
-  font-weight: 500;
-  cursor: pointer;
-}
+/* Modal */
+.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:300;display:none;align-items:flex-end;justify-content:center}
+.modal-bg.show{display:flex}
+.modal{background:#1a1f26;border-radius:20px 20px 0 0;width:100%;max-width:430px;max-height:75vh;overflow-y:auto;padding:16px 20px;transform:translateY(100%);transition:transform .3s ease}
+.modal-bg.show .modal{transform:translateY(0)}
+.modal-handle{width:36px;height:4px;background:rgba(255,255,255,0.2);border-radius:2px;margin:0 auto 14px}
+.modal h3{font-size:15px;font-weight:600;margin-bottom:14px;text-align:center}
+.modal-opt{display:flex;align-items:center;padding:12px 14px;border-radius:var(--rs);cursor:pointer;transition:background .15s;margin-bottom:3px}
+.modal-opt:active{background:var(--bg-hover)}
+.modal-opt.sel{background:var(--green-bg)}
+.modal-radio{width:18px;height:18px;border-radius:50%;border:2px solid var(--text3);margin-right:12px;flex-shrink:0;display:flex;align-items:center;justify-content:center}
+.modal-opt.sel .modal-radio{border-color:var(--green);background:var(--green)}
+.modal-opt.sel .modal-radio::after{content:'';width:7px;height:7px;border-radius:50%;background:var(--bg)}
+.modal-opt-text{font-size:13px;flex:1;min-width:0}
+.modal-opt-brand{font-size:11px;color:var(--text3);margin-top:1px}
+.modal-opt-tag{font-size:10px;color:var(--green);background:var(--green-bg);padding:2px 7px;border-radius:5px;margin-left:auto;flex-shrink:0}
+.modal-cancel{width:100%;padding:12px;margin-top:10px;background:var(--bg-card);border:none;border-radius:12px;color:var(--text2);font-size:14px;font-weight:500;cursor:pointer}
 
-/* New record page */
-.new-record-page {
-  position: fixed;
-  inset: 0;
-  background: var(--bg);
-  z-index: 250;
-  display: none;
-  flex-direction: column;
-  max-width: 430px;
-  margin: 0 auto;
-  overflow-y: auto;
-}
-.new-record-page.show { display: flex; }
-.photo-upload {
-  margin: 16px 20px;
-  aspect-ratio: 16/9;
-  background: var(--bg-card);
-  border: 2px dashed var(--border);
-  border-radius: var(--radius);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  cursor: pointer;
-  transition: border-color 0.2s;
-}
-.photo-upload:active { border-color: var(--text-secondary); }
-.photo-upload-icon { font-size: 32px; opacity: 0.4; }
-.photo-upload-text { font-size: 13px; color: var(--text-hint); }
-.form-section { padding: 0 20px; margin-bottom: 20px; }
-.form-label {
-  font-size: 13px;
-  color: var(--text-secondary);
-  margin-bottom: 10px;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-.form-input {
-  width: 100%;
-  padding: 12px 14px;
-  background: var(--bg-card);
-  border: 1.5px solid var(--border);
-  border-radius: 10px;
-  color: var(--text);
-  font-size: 14px;
-  outline: none;
-}
-.form-input:focus { border-color: rgba(255,255,255,0.2); }
-.form-input::placeholder { color: var(--text-hint); }
-textarea.form-input { resize: none; min-height: 80px; font-family: inherit; line-height: 1.6; }
-.tag-grid { display: flex; flex-wrap: wrap; gap: 8px; }
-.form-tag {
-  padding: 8px 14px;
-  border-radius: 16px;
-  background: var(--bg-card);
-  border: 1.5px solid var(--border);
-  color: var(--text-secondary);
-  font-size: 13px;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-.form-tag.selected {
-  background: var(--green-bg);
-  border-color: var(--green);
-  color: var(--green);
-}
-.weather-auto {
-  padding: 12px 14px;
-  background: var(--bg-card);
-  border-radius: 10px;
-  font-size: 14px;
-  color: var(--text-secondary);
-}
-.fish-row {
-  display: flex;
-  gap: 10px;
-  align-items: center;
-}
-.fish-select {
-  flex: 1;
-  padding: 12px 14px;
-  background: var(--bg-card);
-  border: 1.5px solid var(--border);
-  border-radius: 10px;
-  color: var(--text);
-  font-size: 14px;
-  outline: none;
-  appearance: none;
-  -webkit-appearance: none;
-}
-.fish-size {
-  width: 100px;
-  padding: 12px 14px;
-  background: var(--bg-card);
-  border: 1.5px solid var(--border);
-  border-radius: 10px;
-  color: var(--text);
-  font-size: 14px;
-  outline: none;
-  text-align: center;
-}
-.checkbox-row {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-top: 10px;
-  font-size: 14px;
-  color: var(--text-secondary);
-  cursor: pointer;
-}
-.checkbox {
-  width: 22px;
-  height: 22px;
-  border-radius: 6px;
-  border: 2px solid var(--text-hint);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.2s;
-  flex-shrink: 0;
-}
-.checkbox.checked {
-  background: var(--green);
-  border-color: var(--green);
-}
-.checkbox.checked::after {
-  content: '✓';
-  color: var(--bg);
-  font-size: 13px;
-  font-weight: 700;
-}
-.save-btn-container { padding: 16px 20px 40px; }
-.save-btn {
-  width: 100%;
-  padding: 16px;
-  background: var(--green);
-  border: none;
-  border-radius: 12px;
-  color: var(--bg);
-  font-size: 16px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: opacity 0.2s;
-}
-.save-btn:active { opacity: 0.8; }
+/* Detail page */
+.detail-pg{position:fixed;inset:0;background:var(--bg);z-index:250;display:none;flex-direction:column;max-width:430px;margin:0 auto;overflow-y:auto}
+.detail-pg.show{display:flex}
+.detail-photo{width:100%;aspect-ratio:4/3;background:var(--bg-card);display:flex;align-items:center;justify-content:center;font-size:48px}
+.detail-ct{padding:20px}
+.detail-loc{font-size:16px;font-weight:600;margin-bottom:4px}
+.detail-meta{font-size:12px;color:var(--text2);margin-bottom:3px}
+.detail-tags{display:flex;flex-wrap:wrap;gap:5px;margin:14px 0}
+.detail-row{display:flex;align-items:center;gap:8px;padding:10px 0;font-size:13px;border-bottom:1px solid var(--border)}
+.detail-row-icon{font-size:15px;width:22px;text-align:center}
+.detail-note{margin-top:14px;padding:12px;background:var(--bg-card);border-radius:var(--rs);font-size:13px;line-height:1.7;color:var(--text2)}
 
-/* Animations */
-@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-@keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-.animate-in { animation: slideUp 0.4s ease forwards; }
+/* New record */
+.new-pg{position:fixed;inset:0;background:var(--bg);z-index:250;display:none;flex-direction:column;max-width:430px;margin:0 auto;overflow-y:auto}
+.new-pg.show{display:flex}
+.photo-up{margin:14px 20px;aspect-ratio:16/9;background:var(--bg-card);border:2px dashed var(--border);border-radius:var(--r);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;cursor:pointer}
+.photo-up:active{border-color:var(--text2)}
+.photo-up-icon{font-size:28px;opacity:.4}
+.photo-up-text{font-size:12px;color:var(--text3)}
+.form-sec{padding:0 20px;margin-bottom:18px}
+.form-label{font-size:12px;color:var(--text2);margin-bottom:8px;display:flex;align-items:center;gap:5px}
+.form-input{width:100%;padding:11px 13px;background:var(--bg-card);border:1.5px solid var(--border);border-radius:var(--rs);color:var(--text);font-size:13px;outline:none}
+.form-input:focus{border-color:var(--border2)}
+.form-input::placeholder{color:var(--text3)}
+textarea.form-input{resize:none;min-height:72px;font-family:inherit;line-height:1.6}
+.tag-grid{display:flex;flex-wrap:wrap;gap:7px}
+.ftag{padding:7px 13px;border-radius:14px;background:var(--bg-card);border:1.5px solid var(--border);color:var(--text2);font-size:12px;cursor:pointer;transition:all .2s}
+.ftag.sel{background:var(--green-bg);border-color:var(--green);color:var(--green)}
+.weather-auto{padding:11px 13px;background:var(--bg-card);border-radius:var(--rs);font-size:13px;color:var(--text2)}
+.fish-row{display:flex;gap:8px;align-items:center}
+.fish-sel{flex:1;padding:11px 13px;background:var(--bg-card);border:1.5px solid var(--border);border-radius:var(--rs);color:var(--text);font-size:13px;outline:none;-webkit-appearance:none}
+.fish-size{width:90px;padding:11px;background:var(--bg-card);border:1.5px solid var(--border);border-radius:var(--rs);color:var(--text);font-size:13px;outline:none;text-align:center}
+.cb-row{display:flex;align-items:center;gap:8px;margin-top:8px;font-size:13px;color:var(--text2);cursor:pointer}
+.cb{width:20px;height:20px;border-radius:5px;border:2px solid var(--text3);display:flex;align-items:center;justify-content:center;transition:all .2s;flex-shrink:0}
+.cb.checked{background:var(--green);border-color:var(--green)}
+.cb.checked::after{content:'✓';color:var(--bg);font-size:12px;font-weight:700}
+.save-wrap{padding:16px 20px 36px}
+.save-btn{width:100%;padding:14px;background:var(--green);border:none;border-radius:12px;color:var(--bg);font-size:15px;font-weight:600;cursor:pointer}
+.save-btn:active{opacity:.8}
+.sync-btn{display:inline-flex;align-items:center;gap:4px;padding:5px 10px;background:var(--blue-bg);border:none;border-radius:7px;color:var(--blue);font-size:11px;cursor:pointer;margin-top:6px}
 
-/* City selector */
-.city-modal .city-list { max-height: 50vh; overflow-y: auto; }
-.city-item {
-  padding: 14px 16px;
-  border-radius: 10px;
-  cursor: pointer;
-  font-size: 14px;
-  color: var(--text-secondary);
-  transition: background 0.2s;
-}
-.city-item:active { background: var(--bg-card); }
-.city-item.selected { background: var(--green-bg); color: var(--green); }
+.city-item{padding:12px 14px;border-radius:var(--rs);cursor:pointer;font-size:13px;color:var(--text2);transition:background .2s}
+.city-item:active{background:var(--bg-card)}
+.city-item.sel{background:var(--green-bg);color:var(--green)}
 
-/* Equip sync button */
-.sync-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  padding: 6px 12px;
-  background: var(--blue-bg);
-  border: none;
-  border-radius: 8px;
-  color: var(--blue);
-  font-size: 12px;
-  cursor: pointer;
-  margin-top: 8px;
-}
+@keyframes slideUp{from{transform:translateY(16px);opacity:0}to{transform:translateY(0);opacity:1}}
+.anim{animation:slideUp .35s ease forwards}
 </style>
 </head>
 <body>
 
-<!-- ==================== Page 1: 装备工坊 ==================== -->
+<!-- ===== Page 1: 装备工坊 ===== -->
 <div class="page" id="page-equip">
   <div class="header">
     <div style="width:36px"></div>
     <h1>装备工坊</h1>
-    <button class="header-btn" onclick="alert('设置功能开发中')">⚙</button>
+    <button class="hbtn" onclick="alert('设置')">⚙</button>
   </div>
-  <div class="page-content">
-    <div class="section-label">目标鱼种</div>
+  <div class="pc">
+    <div class="slabel">目标鱼种</div>
     <div class="chip-grid" id="fish-chips">
-      <div class="chip selected" data-fish="翘嘴">翘嘴</div>
+      <div class="chip sel" data-fish="翘嘴">翘嘴</div>
       <div class="chip" data-fish="鲈鱼">鲈鱼</div>
       <div class="chip" data-fish="鳜鱼">鳜鱼</div>
       <div class="chip" data-fish="黑鱼">黑鱼</div>
       <div class="chip" data-fish="鲶鱼">鲶鱼</div>
-      <div class="chip" data-fish="更多">更多 ▾</div>
     </div>
-
-    <div id="env-section" class="animate-in">
-      <div class="section-label">作钓环境</div>
-      <div class="chip-grid" id="env-chips">
-        <div class="chip selected" data-env="大水面远投">大水面远投</div>
-        <div class="chip" data-env="河道桥下">河道桥下</div>
-        <div class="chip" data-env="夜晚弱光">夜晚弱光</div>
-        <div class="chip" data-env="草区障碍">草区障碍</div>
-      </div>
+    <div class="slabel">作钓环境</div>
+    <div class="chip-grid" id="env-chips">
+      <div class="chip sel" data-env="大水面远投">大水面远投</div>
+      <div class="chip" data-env="河道桥下">河道桥下</div>
+      <div class="chip" data-env="夜晚弱光">夜晚弱光</div>
+      <div class="chip" data-env="草区障碍">草区障碍</div>
     </div>
-
     <div class="divider"></div>
-
-    <div class="section-label">装备方案</div>
-    <div class="equip-list" id="equip-list">
-      <div class="equip-card" onclick="openEquipModal('竿')">
-        <span class="equip-icon">🎣</span>
-        <div class="equip-info">
-          <div class="equip-label">竿</div>
-          <div class="equip-value">M硬度 · 快调 · 7尺</div>
+    <div class="slabel">装备方案</div>
+    <div class="eq-list" id="eq-list">
+      <div class="eq-card" onclick="openEqModal('rod')">
+        <span class="eq-icon">🎣</span>
+        <div class="eq-info">
+          <div class="eq-label">竿</div>
+          <div class="eq-val" id="eq-rod-val">达亿瓦 月下美人 MX 76M-T</div>
+          <div class="eq-brand" id="eq-rod-spec">M硬度 · 快调 · 7.6尺 · 自重98g</div>
         </div>
-        <span class="equip-arrow">›</span>
+        <span class="eq-arr">›</span>
       </div>
-      <div class="equip-card" onclick="openEquipModal('轮')">
-        <span class="equip-icon">🔄</span>
-        <div class="equip-info">
-          <div class="equip-label">轮</div>
-          <div class="equip-value">2500型纺车轮</div>
+      <div class="eq-card" onclick="openEqModal('reel')">
+        <span class="eq-icon">🔄</span>
+        <div class="eq-info">
+          <div class="eq-label">轮</div>
+          <div class="eq-val" id="eq-reel-val">禧玛诺 Stradic 2500SHG</div>
+          <div class="eq-brand" id="eq-reel-spec">2500型 · 速比6.0:1 · 自重210g</div>
         </div>
-        <span class="equip-arrow">›</span>
+        <span class="eq-arr">›</span>
       </div>
-      <div class="equip-card" onclick="openEquipModal('线')">
-        <span class="equip-icon">🧵</span>
-        <div class="equip-info">
-          <div class="equip-label">线</div>
-          <div class="equip-value">1号PE + 3号碳前导</div>
+      <div class="eq-card" onclick="openEqModal('line')">
+        <span class="eq-icon">🧵</span>
+        <div class="eq-info">
+          <div class="eq-label">线</div>
+          <div class="eq-val" id="eq-line-val">YGK G-Soul Upgrade X8 1号</div>
+          <div class="eq-brand" id="eq-line-spec">PE线1号 + 碳前导3号 · 20lb</div>
         </div>
-        <span class="equip-arrow">›</span>
+        <span class="eq-arr">›</span>
       </div>
-      <div class="equip-card" onclick="openEquipModal('饵')">
-        <span class="equip-icon">🐟</span>
-        <div class="equip-info">
-          <div class="equip-label">饵</div>
-          <div class="equip-value">15g沉水铅笔</div>
+      <div class="eq-card" onclick="openEqModal('bait')">
+        <span class="eq-icon">🐟</span>
+        <div class="eq-info">
+          <div class="eq-label">饵</div>
+          <div class="eq-val" id="eq-bait-val">DUO Realis Pencil 110</div>
+          <div class="eq-brand" id="eq-bait-spec">沉水铅笔 · 15g · 110mm</div>
         </div>
-        <span class="equip-arrow">›</span>
+        <span class="eq-arr">›</span>
       </div>
     </div>
-
-    <div class="mode-switch">
-      <button class="mode-btn active">官方推荐</button>
-      <button class="mode-btn" onclick="alert('我的方案功能 V1.2 上线')">我的方案</button>
+    <div class="mode-sw">
+      <button class="mode-btn active" onclick="switchMode(this)">官方推荐</button>
+      <button class="mode-btn" onclick="switchMode(this)">我的方案</button>
     </div>
-
-    <div class="hint">
-      <span class="hint-icon">💡</span>
-      <span>当前为官方推荐方案，适合大水面远投翘嘴</span>
+    <div class="hint" id="eq-hint">
+      <span>💡</span>
+      <span>当前为官方推荐方案，适合大水面远投翘嘴。竿轮线饵可点击自由更换。</span>
     </div>
   </div>
 </div>
 
-<!-- ==================== Page 2: 开口期 ==================== -->
+<!-- ===== Page 2: 开口期 ===== -->
 <div class="page active" id="page-bite">
   <div class="header">
     <div style="width:36px"></div>
     <h1>开口期</h1>
-    <button class="header-btn" onclick="refreshBiteData()">🔄</button>
+    <button class="hbtn" onclick="refreshBite()">🔄</button>
   </div>
-  <div class="page-content">
-    <div class="score-section">
+  <div class="pc">
+    <div class="score-sec">
       <div class="score-ring">
-        <svg viewBox="0 0 180 180" width="180" height="180">
-          <circle class="score-ring-bg" cx="90" cy="90" r="78"></circle>
-          <circle class="score-ring-fill" id="score-ring-fill" cx="90" cy="90" r="78"
-            stroke-dasharray="490" stroke-dashoffset="490"></circle>
+        <svg viewBox="0 0 170 170" width="170" height="170">
+          <circle class="sr-bg" cx="85" cy="85" r="74"></circle>
+          <circle class="sr-fill" id="sr-fill" cx="85" cy="85" r="74" stroke-dasharray="465" stroke-dashoffset="465"></circle>
         </svg>
         <div class="score-center">
-          <div class="score-number" id="score-number">--</div>
-          <div class="score-label" id="score-label">加载中...</div>
+          <div class="score-num" id="score-num">--</div>
+          <div class="score-txt" id="score-txt">加载中...</div>
         </div>
       </div>
     </div>
-
-    <div class="location-bar">
-      <div class="location-main">
-        <span class="location-pin">📍</span>
-        <span class="location-name" id="city-name">松山湖 · 大坝区域</span>
-        <button class="location-change" onclick="openCityModal()">切换</button>
+    <div class="loc-bar">
+      <div class="loc-main">
+        <span>📍</span>
+        <span class="loc-name" id="city-name">松山湖 · 大坝区域</span>
+        <button class="loc-change" onclick="openCity()">切换</button>
       </div>
-      <div class="location-meta">
-        <span id="date-display">2026年4月28日 周一</span>
-        <span id="update-time">刚刚更新</span>
+      <div class="loc-meta">
+        <span id="date-disp"></span>
+        <span id="up-time">刚刚更新</span>
       </div>
     </div>
-
     <div class="divider" style="margin-top:0"></div>
-
     <div class="data-grid">
-      <div class="data-card">
-        <div class="data-icon">🌡️</div>
-        <div class="data-label">气温</div>
-        <div class="data-value">24℃</div>
-      </div>
-      <div class="data-card">
-        <div class="data-icon">💧</div>
-        <div class="data-label">水温（估算）</div>
-        <div class="data-value">22℃</div>
-      </div>
-      <div class="data-card">
-        <div class="data-icon">⏱️</div>
-        <div class="data-label">最佳时段</div>
-        <div class="data-value small">16:00-18:30</div>
-      </div>
-      <div class="data-card">
-        <div class="data-icon">🎯</div>
-        <div class="data-label">推荐水层</div>
-        <div class="data-value small">中上层</div>
-      </div>
-      <div class="data-card full">
-        <div class="data-icon">🐟</div>
-        <div class="data-label">推荐饵类</div>
-        <div class="data-value small">反应饵 / 复合亮片 / 沉水铅笔</div>
-      </div>
+      <div class="dcard"><div class="dcard-icon">🌡️</div><div class="dcard-label">气温</div><div class="dcard-val">24℃</div></div>
+      <div class="dcard"><div class="dcard-icon">💧</div><div class="dcard-label">水温（估算）</div><div class="dcard-val">22℃</div></div>
+      <div class="dcard"><div class="dcard-icon">⏱️</div><div class="dcard-label">最佳时段</div><div class="dcard-val sm">16:00-18:30</div></div>
+      <div class="dcard"><div class="dcard-icon">🎯</div><div class="dcard-label">推荐水层</div><div class="dcard-val sm">中上层</div></div>
+      <div class="dcard full"><div class="dcard-icon">🐟</div><div class="dcard-label">推荐饵类</div><div class="dcard-val sm">反应饵 / 复合亮片 / 沉水铅笔</div></div>
     </div>
-
-    <div class="expand-section" id="why-section">
-      <div class="expand-header" onclick="toggleExpand('why-section')">
-        <span>🔍 为什么这么判断？</span>
-        <span class="expand-arrow">▾</span>
-      </div>
-      <div class="expand-body">
-        <div class="expand-body-inner">
-          · 近3日水温稳定在20℃以上，翘嘴活性高<br>
-          · 气压较昨日微升3hPa，鱼类觅食欲望增强<br>
-          · 16:00-18:30为傍晚窗口期，翘嘴追饵活跃<br>
-          · 微风2级，水面有轻微波纹，适合搜索作钓
-        </div>
-      </div>
+    <div class="exp-sec" id="why-sec">
+      <div class="exp-hd" onclick="toggleExp('why-sec')"><span>🔍 为什么这么判断？</span><span class="exp-arr">▾</span></div>
+      <div class="exp-body"><div class="exp-inner">· 近3日水温稳定在20℃以上，翘嘴活性高<br>· 气压较昨日微升3hPa，鱼类觅食欲望增强<br>· 16:00-18:30为傍晚窗口期，翘嘴追饵活跃<br>· 微风2级，水面有轻微波纹利于搜索</div></div>
     </div>
-
-    <div class="forecast-link disabled" style="margin-top:12px">
-      <span>📅 未来3天预测</span>
-      <span class="arrow">›</span>
-    </div>
-    <div style="text-align:center;margin-top:8px;font-size:11px;color:var(--text-hint)">V1.2 上线</div>
+    <div class="fc-link dis" style="margin-top:10px"><span>📅 未来3天预测</span><span>›</span></div>
+    <div style="text-align:center;margin-top:6px;font-size:10px;color:var(--text3)">V1.2 上线</div>
   </div>
 </div>
 
-<!-- ==================== Page 3: 记录本 ==================== -->
+<!-- ===== Page 3: 标点地图 ===== -->
+<div class="page" id="page-map">
+  <div class="header">
+    <div style="width:36px"></div>
+    <h1>标点地图</h1>
+    <button class="hbtn" onclick="alert('筛选')">🔍</button>
+  </div>
+  <!-- Map area -->
+  <div class="map-container">
+    <svg width="100%" height="100%" viewBox="0 0 430 240" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="water" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#1a3a4a"/><stop offset="100%" stop-color="#0f2a3a"/></linearGradient>
+        <linearGradient id="land" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#1a2820"/><stop offset="100%" stop-color="#162018"/></linearGradient>
+      </defs>
+      <rect width="430" height="240" fill="url(#land)"/>
+      <path d="M0,120 Q80,80 160,100 Q220,115 280,90 Q340,70 430,95 L430,240 L0,240Z" fill="url(#water)" opacity="0.7"/>
+      <path d="M120,180 Q180,160 240,175 Q300,185 360,165" stroke="rgba(96,165,250,0.3)" stroke-width="2" fill="none"/>
+      <path d="M80,200 Q150,185 220,195 Q290,205 380,185" stroke="rgba(96,165,250,0.2)" stroke-width="1.5" fill="none"/>
+      <!-- Roads -->
+      <line x1="0" y1="70" x2="430" y2="60" stroke="rgba(255,255,255,0.06)" stroke-width="3"/>
+      <line x1="200" y1="0" x2="220" y2="240" stroke="rgba(255,255,255,0.06)" stroke-width="3"/>
+    </svg>
+    <div class="map-pins">
+      <div class="map-pin pin-red" style="left:22%;top:38%" onclick="openSpotDetail(0)">
+        <div class="pin-dot"></div><div class="pin-label">松山湖大桥</div>
+      </div>
+      <div class="map-pin pin-orange" style="left:52%;top:28%" onclick="openSpotDetail(1)">
+        <div class="pin-dot"></div><div class="pin-label">彩虹桥</div>
+      </div>
+      <div class="map-pin pin-blue" style="left:75%;top:52%" onclick="openSpotDetail(2)">
+        <div class="pin-dot"></div><div class="pin-label">同沙水库北岸</div>
+      </div>
+      <div class="map-pin pin-green" style="left:38%;top:65%" onclick="openSpotDetail(3)">
+        <div class="pin-dot"></div><div class="pin-label">东江石碣段</div>
+      </div>
+      <div class="map-pin pin-green" style="left:65%;top:72%" onclick="openSpotDetail(4)">
+        <div class="pin-dot"></div><div class="pin-label">大王洲</div>
+      </div>
+    </div>
+  </div>
+  <div class="legend">
+    <div class="legend-item"><div class="legend-dot" style="background:#34d399"></div>普通</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#60a5fa"></div>良好</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#fb923c"></div>优质</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#f87171"></div>热门</div>
+  </div>
+  <div class="time-tabs">
+    <div class="time-tab active">3天内</div>
+    <div class="time-tab">7天内</div>
+    <div class="time-tab">15天内</div>
+    <div class="time-tab">30天内</div>
+  </div>
+  <div class="spot-list">
+    <div class="spot-card" onclick="openSpotDetail(0)">
+      <div class="spot-top">
+        <div class="spot-name">松山湖大桥</div>
+        <div class="spot-badge" style="background:var(--red-bg);color:var(--red)">🔥 热门</div>
+      </div>
+      <div class="spot-stats"><span>🐟 23条鱼获</span><span>👤 12人打卡</span><span>📅 今天</span></div>
+      <div class="spot-fish-tags">
+        <span class="spot-fish-tag">翘嘴</span><span class="spot-fish-tag">鲈鱼</span><span class="spot-fish-tag">鳜鱼</span>
+      </div>
+    </div>
+    <div class="spot-card" onclick="openSpotDetail(1)">
+      <div class="spot-top">
+        <div class="spot-name">彩虹桥</div>
+        <div class="spot-badge" style="background:rgba(251,191,36,0.12);color:var(--yellow)">⭐ 优质</div>
+      </div>
+      <div class="spot-stats"><span>🐟 15条鱼获</span><span>👤 8人打卡</span><span>📅 昨天</span></div>
+      <div class="spot-fish-tags">
+        <span class="spot-fish-tag">白条</span><span class="spot-fish-tag">马口</span><span class="spot-fish-tag">翘嘴</span>
+      </div>
+    </div>
+    <div class="spot-card" onclick="openSpotDetail(2)">
+      <div class="spot-top">
+        <div class="spot-name">同沙水库北岸</div>
+        <div class="spot-badge" style="background:var(--blue-bg);color:var(--blue)">良好</div>
+      </div>
+      <div class="spot-stats"><span>🐟 8条鱼获</span><span>👤 5人打卡</span><span>📅 2天前</span></div>
+      <div class="spot-fish-tags">
+        <span class="spot-fish-tag">鲈鱼</span><span class="spot-fish-tag">鳜鱼</span>
+      </div>
+    </div>
+    <div class="spot-card" onclick="openSpotDetail(3)">
+      <div class="spot-top">
+        <div class="spot-name">东江石碣段</div>
+        <div class="spot-badge" style="background:var(--green-bg);color:var(--green)">普通</div>
+      </div>
+      <div class="spot-stats"><span>🐟 3条鱼获</span><span>👤 2人打卡</span><span>📅 3天前</span></div>
+      <div class="spot-fish-tags"><span class="spot-fish-tag">翘嘴</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== Page 4: 记录本 ===== -->
 <div class="page" id="page-log">
   <div class="header">
     <div style="width:36px"></div>
     <h1>记录本</h1>
-    <button class="header-btn" onclick="openNewRecord()">＋</button>
+    <button class="hbtn" onclick="openNewRec()">＋</button>
   </div>
-  <div class="page-content">
-    <div class="search-bar">
-      <span class="search-icon">🔍</span>
-      <input type="text" placeholder="搜索地点、标签、鱼种...">
-    </div>
-    <div class="record-list" id="record-list">
-      <div class="record-card" onclick="openRecordDetail(0)">
-        <div class="record-thumb">🐟</div>
-        <div class="record-info">
-          <div class="record-title">松山湖大桥下游</div>
-          <div class="record-date">2026-04-27 16:30</div>
-          <div class="record-tags">
-            <span class="record-tag">#翘嘴</span>
-            <span class="record-tag">#乱石底</span>
-            <span class="record-tag">#15g铅笔</span>
-          </div>
-          <div class="record-fish">🐟 翘嘴 45cm · 已放流</div>
+  <div class="pc">
+    <div class="search-bar"><span class="si">🔍</span><input placeholder="搜索地点、标签、鱼种..."></div>
+    <div class="rec-list">
+      <div class="rec-card" onclick="openRecDetail(0)">
+        <div class="rec-thumb">🐟</div>
+        <div class="rec-info">
+          <div class="rec-title">松山湖大桥下游</div>
+          <div class="rec-date">2026-04-27 16:30</div>
+          <div class="rec-tags"><span class="rec-tag">#翘嘴</span><span class="rec-tag">#乱石底</span><span class="rec-tag">#铅笔</span></div>
+          <div class="rec-fish">🐟 翘嘴 45cm · 已放流</div>
         </div>
       </div>
-      <div class="record-card" onclick="openRecordDetail(1)">
-        <div class="record-thumb">🎣</div>
-        <div class="record-info">
-          <div class="record-title">同沙水库北岸</div>
-          <div class="record-date">2026-04-20 10:15</div>
-          <div class="record-tags">
-            <span class="record-tag">#鲈鱼</span>
-            <span class="record-tag">#草区</span>
-            <span class="record-tag">#德州</span>
-          </div>
-          <div class="record-fish">🐟 鲈鱼 32cm</div>
+      <div class="rec-card" onclick="openRecDetail(1)">
+        <div class="rec-thumb">🎣</div>
+        <div class="rec-info">
+          <div class="rec-title">同沙水库北岸</div>
+          <div class="rec-date">2026-04-20 10:15</div>
+          <div class="rec-tags"><span class="rec-tag">#鲈鱼</span><span class="rec-tag">#草区</span><span class="rec-tag">#德州</span></div>
+          <div class="rec-fish">🐟 鲈鱼 32cm</div>
         </div>
       </div>
-      <div class="record-card" onclick="openRecordDetail(2)">
-        <div class="record-thumb" style="opacity:0.3">📷</div>
-        <div class="record-info">
-          <div class="record-title">东江石碣段</div>
-          <div class="record-date">2026-04-15 17:00</div>
-          <div class="record-tags">
-            <span class="record-tag">#翘嘴</span>
-            <span class="record-tag">#急流</span>
-            <span class="record-tag">#VIB</span>
-          </div>
-          <div class="record-fish" style="color:var(--text-hint)">🐟 没有中鱼</div>
+      <div class="rec-card" onclick="openRecDetail(2)">
+        <div class="rec-thumb" style="opacity:.3">📷</div>
+        <div class="rec-info">
+          <div class="rec-title">东江石碣段</div>
+          <div class="rec-date">2026-04-15 17:00</div>
+          <div class="rec-tags"><span class="rec-tag">#翘嘴</span><span class="rec-tag">#急流</span><span class="rec-tag">#VIB</span></div>
+          <div class="rec-fish" style="color:var(--text3)">🐟 没有中鱼</div>
         </div>
       </div>
-      <div class="record-card" onclick="openRecordDetail(3)">
-        <div class="record-thumb">🏆</div>
-        <div class="record-info">
-          <div class="record-title">东莞运河大王洲段</div>
-          <div class="record-date">2026-04-10 06:30</div>
-          <div class="record-tags">
-            <span class="record-tag">#翘嘴</span>
-            <span class="record-tag">#深水</span>
-            <span class="record-tag">#铁板</span>
-          </div>
-          <div class="record-fish">🐟 翘嘴 52cm · 已放流</div>
+      <div class="rec-card" onclick="openRecDetail(3)">
+        <div class="rec-thumb">🏆</div>
+        <div class="rec-info">
+          <div class="rec-title">东莞运河大王洲段</div>
+          <div class="rec-date">2026-04-10 06:30</div>
+          <div class="rec-tags"><span class="rec-tag">#翘嘴</span><span class="rec-tag">#深水</span><span class="rec-tag">#铁板</span></div>
+          <div class="rec-fish">🐟 翘嘴 52cm · 已放流</div>
         </div>
       </div>
     </div>
   </div>
 </div>
 
-<!-- FAB for record page -->
-<button class="fab" id="fab-add" onclick="openNewRecord()">＋</button>
+<button class="fab" id="fab-add" onclick="openNewRec()">＋</button>
 
-<!-- ==================== Equip Modal ==================== -->
-<div class="modal-overlay" id="equip-modal" onclick="closeEquipModal(event)">
+<!-- ===== Spot Detail Page ===== -->
+<div class="spot-detail" id="spot-detail">
+  <div class="header">
+    <button class="hbtn" onclick="closeSpotDetail()">←</button>
+    <h1 id="sd-title">松山湖大桥</h1>
+    <div style="width:36px"></div>
+  </div>
+  <div class="spot-hero">
+    <div class="spot-hero-name" id="sd-name">松山湖大桥</div>
+    <div class="spot-hero-loc" id="sd-loc">📍 东莞市松山湖 · 大坝下游区域</div>
+    <div class="spot-hero-stats">
+      <div class="spot-stat"><div class="spot-stat-num" id="sd-catches">23</div><div class="spot-stat-label">鱼获</div></div>
+      <div class="spot-stat"><div class="spot-stat-num" id="sd-users">12</div><div class="spot-stat-label">钓友</div></div>
+      <div class="spot-stat"><div class="spot-stat-num" id="sd-best" style="color:var(--yellow)">52</div><div class="spot-stat-label">最大(cm)</div></div>
+    </div>
+  </div>
+
+  <div class="spot-official">
+    <div class="spot-official-title">🎣 官方推荐装备</div>
+    <div class="spot-official-items">
+      <div class="spot-official-item">竿：M调 7尺</div>
+      <div class="spot-official-item">轮：2500纺车</div>
+      <div class="spot-official-item">线：PE1号+碳前导3号</div>
+      <div class="spot-official-item">饵：15g沉水铅笔</div>
+    </div>
+  </div>
+
+  <div class="catch-section-title">📋 钓友鱼获（按时间）</div>
+
+  <div id="sd-catches-list">
+    <div class="catch-card">
+      <div class="catch-main">
+        <div class="catch-photo">🐟</div>
+        <div class="catch-info">
+          <div class="catch-user">
+            <div class="catch-avatar">张</div><span class="catch-uname">钓鱼张三</span><span class="catch-time">2小时前</span>
+          </div>
+          <div class="catch-fish">翘嘴 45cm</div>
+          <div class="catch-weight">放流 ✓</div>
+          <div class="catch-equip">
+            <span class="catch-equip-tag">达亿瓦月下美人76M</span>
+            <span class="catch-equip-tag">禧玛诺2500SHG</span>
+            <span class="catch-equip-tag">PE1号</span>
+            <span class="catch-equip-tag">DUO铅笔110</span>
+          </div>
+        </div>
+      </div>
+      <div class="catch-footer">
+        <span class="catch-action">👁 317</span>
+        <span class="catch-action">👍 12</span>
+        <span class="catch-action" onclick="toggleComments(this)">💬 3</span>
+        <span class="catch-action" style="margin-left:auto" onclick="alert('复制装备方案')">📋 抄作业</span>
+      </div>
+    </div>
+
+    <div class="catch-card">
+      <div class="catch-main">
+        <div class="catch-photo">🎣</div>
+        <div class="catch-info">
+          <div class="catch-user">
+            <div class="catch-avatar">李</div><span class="catch-uname">路亚李四</span><span class="catch-time">昨天 17:20</span>
+          </div>
+          <div class="catch-fish">翘嘴 38cm</div>
+          <div class="catch-weight">带走</div>
+          <div class="catch-equip">
+            <span class="catch-equip-tag">阿布C4 6.10M</span>
+            <span class="catch-equip-tag">达亿瓦月下美人LT</span>
+            <span class="catch-equip-tag">PE0.8号</span>
+            <span class="catch-equip-tag">10g VIB银色</span>
+          </div>
+        </div>
+      </div>
+      <div class="catch-footer">
+        <span class="catch-action">👁 196</span>
+        <span class="catch-action">👍 5</span>
+        <span class="catch-action" onclick="toggleComments(this)">💬 1</span>
+        <span class="catch-action" style="margin-left:auto" onclick="alert('复制装备方案')">📋 抄作业</span>
+      </div>
+    </div>
+
+    <div class="catch-card">
+      <div class="catch-main">
+        <div class="catch-photo">🏆</div>
+        <div class="catch-info">
+          <div class="catch-user">
+            <div class="catch-avatar">王</div><span class="catch-uname">翘嘴猎手</span><span class="catch-time">昨天 06:50</span>
+          </div>
+          <div class="catch-fish">翘嘴 52cm 🏆</div>
+          <div class="catch-weight">放流 ✓</div>
+          <div class="catch-equip">
+            <span class="catch-equip-tag">天鼎 铠甲76MH</span>
+            <span class="catch-equip-tag">禧玛诺Stradic3000</span>
+            <span class="catch-equip-tag">PE1.5号</span>
+            <span class="catch-equip-tag">20g铁板银色</span>
+          </div>
+        </div>
+      </div>
+      <div class="catch-footer">
+        <span class="catch-action">👁 521</span>
+        <span class="catch-action">👍 28</span>
+        <span class="catch-action" onclick="toggleComments(this)">💬 8</span>
+        <span class="catch-action" style="margin-left:auto" onclick="alert('复制装备方案')">📋 抄作业</span>
+      </div>
+    </div>
+
+    <div class="catch-card">
+      <div class="catch-main">
+        <div class="catch-photo" style="font-size:20px;color:var(--text3)">📷</div>
+        <div class="catch-info">
+          <div class="catch-user">
+            <div class="catch-avatar">陈</div><span class="catch-uname">新手小陈</span><span class="catch-time">3天前</span>
+          </div>
+          <div class="catch-fish" style="color:var(--text3)">空军 😅</div>
+          <div class="catch-weight" style="color:var(--text3)">试了2小时没口</div>
+          <div class="catch-equip">
+            <span class="catch-equip-tag">杂牌竿 7尺M</span>
+            <span class="catch-equip-tag">迪佳2500</span>
+            <span class="catch-equip-tag">尼龙线3号</span>
+            <span class="catch-equip-tag">7g小胖子</span>
+          </div>
+        </div>
+      </div>
+      <div class="catch-footer">
+        <span class="catch-action">👁 89</span>
+        <span class="catch-action">👍 2</span>
+        <span class="catch-action" onclick="toggleComments(this)">💬 5</span>
+        <span class="catch-action" style="margin-left:auto" onclick="alert('复制装备方案')">📋 抄作业</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Comments section (shown inline) -->
+  <div class="comments-section" id="comments-sec" style="display:none">
+    <div class="comment-item">
+      <div class="comment-top"><div class="comment-avatar">张</div><span class="comment-name">钓鱼张三</span><span class="comment-time">1小时前</span></div>
+      <div class="comment-text">这个点位水深大概多少？我上次去找不到鱼层</div>
+    </div>
+    <div class="comment-item">
+      <div class="comment-top"><div class="comment-avatar">王</div><span class="comment-name">翘嘴猎手</span><span class="comment-time">45分钟前</span></div>
+      <div class="comment-text">桥墩下面3-4米，铁板垂直搜底，到底后小跳两下。傍晚的话鱼在中上层，换铅笔水面系</div>
+    </div>
+    <div class="comment-item">
+      <div class="comment-top"><div class="comment-avatar">陈</div><span class="comment-name">新手小陈</span><span class="comment-time">30分钟前</span></div>
+      <div class="comment-text">谢谢大佬！怪不得我用小胖子没口，下次试试铁板搜底</div>
+    </div>
+  </div>
+
+  <div class="comment-input-bar">
+    <input class="comment-input" placeholder="写留言..." id="comment-input">
+    <button class="comment-send" onclick="sendComment()">发送</button>
+  </div>
+</div>
+
+<!-- ===== Equip Modal ===== -->
+<div class="modal-bg" id="eq-modal" onclick="closeEqModal(event)">
   <div class="modal">
     <div class="modal-handle"></div>
-    <h3 id="equip-modal-title">选择假饵</h3>
-    <div id="equip-modal-options"></div>
-    <button class="modal-cancel" onclick="closeEquipModal()">取消</button>
+    <h3 id="eq-modal-title">选择</h3>
+    <div id="eq-modal-opts"></div>
+    <button class="modal-cancel" onclick="closeEqModal()">取消</button>
   </div>
 </div>
 
-<!-- ==================== City Modal ==================== -->
-<div class="modal-overlay city-modal" id="city-modal" onclick="closeCityModal(event)">
+<!-- ===== City Modal ===== -->
+<div class="modal-bg" id="city-modal" onclick="closeCity(event)">
   <div class="modal">
     <div class="modal-handle"></div>
     <h3>选择城市</h3>
-    <div class="city-list">
-      <div class="city-item selected" onclick="selectCity('松山湖 · 大坝区域')">📍 松山湖 · 大坝区域</div>
-      <div class="city-item" onclick="selectCity('东莞 · 同沙水库')">📍 东莞 · 同沙水库</div>
-      <div class="city-item" onclick="selectCity('东莞 · 东江石碣段')">📍 东莞 · 东江石碣段</div>
-      <div class="city-item" onclick="selectCity('深圳 · 茅洲河')">📍 深圳 · 茅洲河</div>
-      <div class="city-item" onclick="selectCity('惠州 · 白盆珠水库')">📍 惠州 · 白盆珠水库</div>
-      <div class="city-item" onclick="selectCity('广州 · 流溪河')">📍 广州 · 流溪河</div>
-    </div>
-    <button class="modal-cancel" onclick="closeCityModal()">取消</button>
+    <div class="city-item sel" onclick="selCity('松山湖 · 大坝区域',this)">📍 松山湖 · 大坝区域</div>
+    <div class="city-item" onclick="selCity('东莞 · 同沙水库',this)">📍 东莞 · 同沙水库</div>
+    <div class="city-item" onclick="selCity('东莞 · 东江石碣段',this)">📍 东莞 · 东江石碣段</div>
+    <div class="city-item" onclick="selCity('深圳 · 茅洲河',this)">📍 深圳 · 茅洲河</div>
+    <div class="city-item" onclick="selCity('惠州 · 白盆珠水库',this)">📍 惠州 · 白盆珠水库</div>
+    <button class="modal-cancel" onclick="closeCity()">取消</button>
   </div>
 </div>
 
-<!-- ==================== Record Detail ==================== -->
-<div class="detail-page" id="detail-page">
+<!-- ===== Record Detail ===== -->
+<div class="detail-pg" id="rec-detail">
   <div class="header">
-    <button class="header-btn" onclick="closeDetail()">←</button>
+    <button class="hbtn" onclick="closeRecDetail()">←</button>
     <h1>记录详情</h1>
-    <button class="header-btn" onclick="alert('编辑功能开发中')">✎</button>
+    <button class="hbtn" onclick="alert('编辑')">✎</button>
   </div>
-  <div class="detail-photo" id="detail-photo">🐟</div>
-  <div class="detail-content">
-    <div class="detail-location" id="detail-location">松山湖大桥下游50米</div>
-    <div class="detail-meta" id="detail-date">📅 2026-04-27 16:30</div>
-    <div class="detail-meta" id="detail-weather">🌤️ 晴 24℃ 气压1012hPa</div>
-    <div class="detail-tags" id="detail-tags">
-      <span class="record-tag">#翘嘴</span>
-      <span class="record-tag">#乱石底</span>
-      <span class="record-tag">#有倒树</span>
-    </div>
-    <div class="detail-row">
-      <span class="detail-row-icon">🎣</span>
-      <span>用饵：</span>
-      <span id="detail-bait" style="color:var(--text)">15g沉水铅笔</span>
-    </div>
-    <div class="detail-row">
-      <span class="detail-row-icon">🐟</span>
-      <span>鱼获：</span>
-      <span id="detail-catch" style="color:var(--text)">翘嘴 45cm</span>
-      <span style="margin-left:auto;color:var(--green);font-size:12px" id="detail-release">☑ 已放流</span>
-    </div>
-    <div class="detail-note" id="detail-note">
-      中鱼时饵刚到底，小跳两下就炸口了。中鱼点在桥墩正下方偏左5米，水深约3米。傍晚窗口期，连续中了3条，最大这条45cm。
-    </div>
-    <button class="detail-delete" onclick="alert('确认删除这条记录？')">🗑️ 删除记录</button>
+  <div class="detail-photo" id="rd-photo">🐟</div>
+  <div class="detail-ct">
+    <div class="detail-loc" id="rd-loc">松山湖大桥下游50米</div>
+    <div class="detail-meta" id="rd-date">📅 2026-04-27 16:30</div>
+    <div class="detail-meta" id="rd-weather">🌤️ 晴 24℃ 气压1012hPa</div>
+    <div class="detail-tags" id="rd-tags"></div>
+    <div class="detail-row"><span class="detail-row-icon">🎣</span><span>用饵：</span><span id="rd-bait" style="color:var(--text)">15g沉水铅笔</span></div>
+    <div class="detail-row"><span class="detail-row-icon">🐟</span><span>鱼获：</span><span id="rd-catch" style="color:var(--text)">翘嘴 45cm</span><span style="margin-left:auto;color:var(--green);font-size:11px" id="rd-release">☑ 已放流</span></div>
+    <div class="detail-note" id="rd-note"></div>
+    <button style="margin-top:20px;width:100%;padding:13px;background:var(--red-bg);border:none;border-radius:12px;color:var(--red);font-size:13px;font-weight:500;cursor:pointer" onclick="alert('确认删除？')">🗑️ 删除记录</button>
   </div>
 </div>
 
-<!-- ==================== New Record ==================== -->
-<div class="new-record-page" id="new-record-page">
+<!-- ===== New Record ===== -->
+<div class="new-pg" id="new-rec-pg">
   <div class="header">
-    <button class="header-btn" onclick="closeNewRecord()">←</button>
+    <button class="hbtn" onclick="closeNewRec()">←</button>
     <h1>新建记录</h1>
     <div style="width:36px"></div>
   </div>
-  <div class="photo-upload" onclick="alert('拍照/相册选择')">
-    <div class="photo-upload-icon">📸</div>
-    <div class="photo-upload-text">拍照或从相册选择（可选）</div>
-  </div>
-
-  <div class="form-section">
+  <div class="photo-up" onclick="alert('拍照/相册')"><div class="photo-up-icon">📸</div><div class="photo-up-text">拍照或从相册选择（可选）</div></div>
+  <div class="form-sec">
     <div class="form-label">📍 钓点位置</div>
-    <div style="display:flex;gap:8px;align-items:center">
-      <input class="form-input" value="松山湖大桥下游" style="flex:1" readonly>
-      <button class="location-change" onclick="alert('重新定位')">重新定位</button>
-    </div>
+    <div style="display:flex;gap:8px;align-items:center"><input class="form-input" value="松山湖大桥下游" style="flex:1" readonly><button class="loc-change" onclick="alert('重新定位')">定位</button></div>
   </div>
-
-  <div class="form-section">
-    <div class="form-label">🏷️ 标签（点选）</div>
+  <div class="form-sec">
+    <div class="form-label">🏷️ 标签</div>
     <div class="tag-grid" id="form-tags">
-      <div class="form-tag" onclick="toggleFormTag(this)">翘嘴</div>
-      <div class="form-tag" onclick="toggleFormTag(this)">鲈鱼</div>
-      <div class="form-tag" onclick="toggleFormTag(this)">鳜鱼</div>
-      <div class="form-tag" onclick="toggleFormTag(this)">黑鱼</div>
-      <div class="form-tag" onclick="toggleFormTag(this)">乱石底</div>
-      <div class="form-tag" onclick="toggleFormTag(this)">草区</div>
-      <div class="form-tag" onclick="toggleFormTag(this)">急流</div>
-      <div class="form-tag" onclick="toggleFormTag(this)">深水</div>
-      <div class="form-tag" onclick="toggleFormTag(this)">桥墩</div>
-      <div class="form-tag" onclick="toggleFormTag(this)">倒树</div>
-      <div class="form-tag" onclick="toggleFormTag(this)">陡坎</div>
-      <div class="form-tag" onclick="toggleFormTag(this)">浅滩</div>
+      <div class="ftag" onclick="this.classList.toggle('sel')">翘嘴</div>
+      <div class="ftag" onclick="this.classList.toggle('sel')">鲈鱼</div>
+      <div class="ftag" onclick="this.classList.toggle('sel')">鳜鱼</div>
+      <div class="ftag" onclick="this.classList.toggle('sel')">黑鱼</div>
+      <div class="ftag" onclick="this.classList.toggle('sel')">乱石底</div>
+      <div class="ftag" onclick="this.classList.toggle('sel')">草区</div>
+      <div class="ftag" onclick="this.classList.toggle('sel')">急流</div>
+      <div class="ftag" onclick="this.classList.toggle('sel')">深水</div>
+      <div class="ftag" onclick="this.classList.toggle('sel')">桥墩</div>
+      <div class="ftag" onclick="this.classList.toggle('sel')">倒树</div>
     </div>
   </div>
-
-  <div class="form-section">
+  <div class="form-sec">
     <div class="form-label">🎣 用饵</div>
-    <input class="form-input" placeholder="例如：15g沉水铅笔">
-    <button class="sync-btn" onclick="alert('已同步装备工坊当前方案')">🔄 从装备工坊同步</button>
+    <input class="form-input" placeholder="例如：DUO铅笔 15g">
+    <button class="sync-btn" onclick="alert('已同步：DUO Realis Pencil 110 15g')">🔄 从装备工坊同步</button>
   </div>
-
-  <div class="form-section">
-    <div class="form-label">🌤️ 天气（自动获取）</div>
+  <div class="form-sec">
+    <div class="form-label">🌤️ 天气（自动）</div>
     <div class="weather-auto">晴 24℃ · 气压1012hPa · 微风2级</div>
   </div>
-
-  <div class="form-section">
+  <div class="form-sec">
     <div class="form-label">🐟 鱼获</div>
     <div class="fish-row">
-      <select class="fish-select">
-        <option>翘嘴</option>
-        <option>鲈鱼</option>
-        <option>鳜鱼</option>
-        <option>黑鱼</option>
-        <option>鲶鱼</option>
-        <option>其他</option>
-      </select>
-      <input class="fish-size" type="number" placeholder="cm" id="fish-size-input">
-      <span style="font-size:14px;color:var(--text-secondary)">cm</span>
+      <select class="fish-sel"><option>翘嘴</option><option>鲈鱼</option><option>鳜鱼</option><option>黑鱼</option><option>鲶鱼</option><option>其他</option></select>
+      <input class="fish-size" type="number" placeholder="cm" id="fs-input">
+      <span style="font-size:13px;color:var(--text2)">cm</span>
     </div>
-    <div class="checkbox-row" onclick="toggleCheckbox('release-cb')">
-      <div class="checkbox" id="release-cb"></div>
-      <span>放流</span>
-    </div>
-    <div class="checkbox-row" onclick="toggleNoFish()">
-      <div class="checkbox" id="nofish-cb"></div>
-      <span>没有中鱼</span>
-    </div>
+    <div class="cb-row" onclick="toggleCb('rel-cb')"><div class="cb" id="rel-cb"></div><span>放流</span></div>
+    <div class="cb-row" onclick="toggleNoFish()"><div class="cb" id="nf-cb"></div><span>没有中鱼</span></div>
   </div>
-
-  <div class="form-section">
+  <div class="form-sec">
     <div class="form-label">📝 备注（可选）</div>
     <textarea class="form-input" placeholder="中鱼手法、水深、特殊情况..."></textarea>
   </div>
-
-  <div class="save-btn-container">
-    <button class="save-btn" onclick="saveRecord()">保存记录</button>
+  <div class="form-sec">
+    <div class="cb-row" onclick="toggleCb('pub-cb')"><div class="cb" id="pub-cb"></div><span>同步到标点地图（公开鱼获和装备搭配）</span></div>
   </div>
+  <div class="save-wrap"><button class="save-btn" onclick="saveRec()">保存记录</button></div>
 </div>
 
-<!-- ==================== Tab Bar ==================== -->
+<!-- ===== Tab Bar ===== -->
 <div class="tab-bar">
-  <button class="tab" onclick="switchTab('equip')">
-    <span class="tab-icon">🎣</span>
-    <span class="tab-label">装备工坊</span>
-  </button>
-  <button class="tab active" onclick="switchTab('bite')">
-    <span class="tab-icon">📊</span>
-    <span class="tab-label">开口期</span>
-  </button>
-  <button class="tab" onclick="switchTab('log')">
-    <span class="tab-icon">📒</span>
-    <span class="tab-label">记录本</span>
-  </button>
+  <button class="tab" onclick="switchTab('equip')"><span class="tab-icon">🎣</span><span class="tab-label">装备工坊</span></button>
+  <button class="tab active" onclick="switchTab('bite')"><span class="tab-icon">📊</span><span class="tab-label">开口期</span></button>
+  <button class="tab" onclick="switchTab('map')"><span class="tab-icon">📍</span><span class="tab-label">标点</span></button>
+  <button class="tab" onclick="switchTab('log')"><span class="tab-icon">📒</span><span class="tab-label">记录本</span></button>
 </div>
 
 <script>
-// Tab switching
-function switchTab(name) {
-  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-  document.getElementById('page-' + name).classList.add('active');
-  const tabs = document.querySelectorAll('.tab');
-  const idx = { equip: 0, bite: 1, log: 2 }[name];
-  tabs[idx].classList.add('active');
-  const fab = document.getElementById('fab-add');
-  fab.classList.toggle('show', name === 'log');
+function switchTab(n){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('page-'+n).classList.add('active');
+  const idx={equip:0,bite:1,map:2,log:3}[n];
+  document.querySelectorAll('.tab')[idx].classList.add('active');
+  document.getElementById('fab-add').classList.toggle('show',n==='log');
 }
 
-// Fish chip selection
-document.getElementById('fish-chips').addEventListener('click', (e) => {
-  const chip = e.target.closest('.chip');
-  if (!chip) return;
-  document.querySelectorAll('#fish-chips .chip').forEach(c => c.classList.remove('selected'));
-  chip.classList.add('selected');
-  updateEquipment(chip.dataset.fish);
+// Fish/Env chips
+document.getElementById('fish-chips').addEventListener('click',e=>{
+  const c=e.target.closest('.chip');if(!c)return;
+  document.querySelectorAll('#fish-chips .chip').forEach(x=>x.classList.remove('sel'));
+  c.classList.add('sel');updateEquip(c.dataset.fish);
+});
+document.getElementById('env-chips').addEventListener('click',e=>{
+  const c=e.target.closest('.chip');if(!c)return;
+  document.querySelectorAll('#env-chips .chip').forEach(x=>x.classList.remove('sel'));
+  c.classList.add('sel');
 });
 
-// Env chip selection
-document.getElementById('env-chips').addEventListener('click', (e) => {
-  const chip = e.target.closest('.chip');
-  if (!chip) return;
-  document.querySelectorAll('#env-chips .chip').forEach(c => c.classList.remove('selected'));
-  chip.classList.add('selected');
+// Time tabs
+document.querySelector('.time-tabs').addEventListener('click',e=>{
+  const t=e.target.closest('.time-tab');if(!t)return;
+  document.querySelectorAll('.time-tab').forEach(x=>x.classList.remove('active'));
+  t.classList.add('active');
 });
 
-// Equipment data
-const equipData = {
-  '翘嘴': {
-    rod: 'M硬度 · 快调 · 7尺', reel: '2500型纺车轮',
-    line: '1号PE + 3号碳前导', bait: '15g沉水铅笔',
-    hint: '当前为官方推荐方案，适合大水面远投翘嘴'
+const eqDB={
+  '翘嘴':{
+    rod:{val:'达亿瓦 月下美人 MX 76M-T',spec:'M硬度 · 快调 · 7.6尺 · 自重98g'},
+    reel:{val:'禧玛诺 Stradic 2500SHG',spec:'2500型 · 速比6.0:1 · 自重210g'},
+    line:{val:'YGK G-Soul Upgrade X8 1号',spec:'PE线1号 + 碳前导3号 · 20lb'},
+    bait:{val:'DUO Realis Pencil 110',spec:'沉水铅笔 · 15g · 110mm'},
+    hint:'适合大水面远投翘嘴。铅笔狗走+停顿，窗口期效率最高。'
   },
-  '鲈鱼': {
-    rod: 'ML硬度 · 中快调 · 6.6尺', reel: '2500型纺车轮',
-    line: '0.8号PE + 2.5号碳前导', bait: '3/8oz德州钓组',
-    hint: '当前为官方推荐方案，适合障碍区搜索鲈鱼'
+  '鲈鱼':{
+    rod:{val:'阿布 Hornet Stinger PLUS 6102M',spec:'M硬度 · 中快调 · 6.10尺 · 自重108g'},
+    reel:{val:'达亿瓦 月下美人 MX LT2500',spec:'2500型 · 速比5.3:1 · 自重200g'},
+    line:{val:'Sunline PE EGI ULT HS8 0.8号',spec:'PE线0.8号 + 碳前导2.5号 · 16lb'},
+    bait:{val:'O.S.P DoLive Stick 4.5寸',spec:'德州钓组 · 3/16oz子弹铅 · 1/0钩'},
+    hint:'适合草区/障碍区慢搜鲈鱼。德州入水后缓慢跳底拖行。'
   },
-  '鳜鱼': {
-    rod: 'M硬度 · 快调 · 6.10尺', reel: '2500型纺车轮',
-    line: '1号PE + 3号碳前导', bait: '7g铅头钩+T尾软饵',
-    hint: '当前为官方推荐方案，适合慢搜底层鳜鱼'
+  '鳜鱼':{
+    rod:{val:'天鼎 暴力鳜 702M',spec:'M硬度 · 快调 · 7尺 · 自重105g'},
+    reel:{val:'禧玛诺 Sahara 2500HG',spec:'2500型 · 速比6.2:1 · 自重220g'},
+    line:{val:'达亿瓦 月下美人PE 1号',spec:'PE线1号 + 碳前导3号 · 20lb'},
+    bait:{val:'ECOGEAR Power Shad 4寸',spec:'铅头钩7g + T尾软饵 · 自然色'},
+    hint:'适合乱石底慢搜鳜鱼。铅头钩轻跳，贴底搜索结构区。'
   },
-  '黑鱼': {
-    rod: 'H硬度 · 快调 · 7.3尺', reel: '水滴轮/蛙轮',
-    line: '5号PE编织线', bait: '雷蛙/蛙型饵',
-    hint: '当前为官方推荐方案，适合草区打黑'
+  '黑鱼':{
+    rod:{val:'达亿瓦 一击 黑鱼 73H',spec:'H硬度 · 快调 · 7.3尺 · 自重142g'},
+    reel:{val:'阿布 REVO Beast 41 HS',spec:'水滴轮 · 速比7.3:1 · 刹车力12kg'},
+    line:{val:'YGK 柔 X8 5号',spec:'PE编织线5号 · 80lb · 不用前导'},
+    bait:{val:'蛙人 经典雷蛙 双钩款',spec:'雷蛙 · 15g · 55mm · 浮水'},
+    hint:'草区打黑专用。雷蛙打到草洞上方，等2秒再抽。'
   },
-  '鲶鱼': {
-    rod: 'MH硬度 · 中快调 · 7尺', reel: '3000型纺车轮',
-    line: '2号PE + 5号碳前导', bait: '10g亮片/旋转亮片',
-    hint: '当前为官方推荐方案，适合夜钓鲶鱼'
+  '鲶鱼':{
+    rod:{val:'光威 烈火 762MH',spec:'MH硬度 · 快调 · 7.6尺 · 自重125g'},
+    reel:{val:'禧玛诺 Nasci 3000HG',spec:'3000型 · 速比6.2:1 · 自重230g'},
+    line:{val:'达亿瓦 UVF 2号',spec:'PE线2号 + 碳前导5号 · 30lb'},
+    bait:{val:'Smith Pure 10g',spec:'旋转亮片 · 10g · 银色'},
+    hint:'夜钓鲶鱼效率最高。亮片匀收，偶尔停顿触底。'
   }
 };
 
-function updateEquipment(fish) {
-  const data = equipData[fish];
-  if (!data) return;
-  const cards = document.querySelectorAll('#equip-list .equip-value');
-  cards[0].textContent = data.rod;
-  cards[1].textContent = data.reel;
-  cards[2].textContent = data.line;
-  cards[3].textContent = data.bait;
-  document.querySelector('.hint span:last-child').textContent = data.hint;
+function updateEquip(fish){
+  const d=eqDB[fish];if(!d)return;
+  ['rod','reel','line','bait'].forEach(k=>{
+    document.getElementById('eq-'+k+'-val').textContent=d[k].val;
+    document.getElementById('eq-'+k+'-spec').textContent=d[k].spec;
+  });
+  document.querySelector('#eq-hint span:last-child').textContent='当前为官方推荐方案，'+d.hint;
 }
 
-// Equipment modal
-const equipOptions = {
-  '竿': [
-    { text: 'M硬度 · 快调 · 7尺', tag: '推荐' },
-    { text: 'ML硬度 · 中快调 · 6.6尺' },
-    { text: 'MH硬度 · 快调 · 7.3尺' },
-    { text: 'L硬度 · 慢调 · 6.3尺' },
+const eqOptions={
+  rod:[
+    {val:'达亿瓦 月下美人 MX 76M-T',spec:'M硬度 · 快调 · 7.6尺 · ¥680',tag:'推荐'},
+    {val:'阿布 Hornet Stinger PLUS 6102M',spec:'M硬度 · 中快调 · 6.10尺 · ¥520'},
+    {val:'天鼎 铠甲 76MH',spec:'MH硬度 · 快调 · 7.6尺 · ¥380'},
+    {val:'光威 烈火 762MH',spec:'MH硬度 · 快调 · 7.6尺 · ¥260'},
+    {val:'汉鼎 一号 7M',spec:'M硬度 · 快调 · 7尺 · ¥158'}
   ],
-  '轮': [
-    { text: '2500型纺车轮', tag: '推荐' },
-    { text: '3000型纺车轮' },
-    { text: '水滴轮 · 左手', },
-    { text: '水滴轮 · 右手' },
+  reel:[
+    {val:'禧玛诺 Stradic 2500SHG',spec:'速比6.0:1 · 自重210g · ¥980',tag:'推荐'},
+    {val:'达亿瓦 月下美人 MX LT2500',spec:'速比5.3:1 · 自重200g · ¥650'},
+    {val:'禧玛诺 Sahara 2500HG',spec:'速比6.2:1 · 自重220g · ¥380'},
+    {val:'迪佳 海神 2500',spec:'速比5.2:1 · 自重245g · ¥180'},
+    {val:'阿布 REVO Beast 41 HS（水滴）',spec:'速比7.3:1 · 刹车12kg · ¥1280'}
   ],
-  '线': [
-    { text: '1号PE + 3号碳前导', tag: '推荐' },
-    { text: '0.8号PE + 2.5号碳前导' },
-    { text: '2号PE + 5号碳前导' },
-    { text: '8磅碳线通线' },
+  line:[
+    {val:'YGK G-Soul Upgrade X8 1号',spec:'8编PE · 20lb · ¥85/150m',tag:'推荐'},
+    {val:'Sunline PE EGI ULT HS8 0.8号',spec:'8编PE · 16lb · ¥75/150m'},
+    {val:'达亿瓦 UVF 2号',spec:'8编PE · 30lb · ¥90/150m'},
+    {val:'YGK 柔 X8 5号',spec:'8编PE · 80lb · ¥95/100m（打黑专用）'},
+    {val:'西格 碳前导线 3号',spec:'碳氟前导 · 12lb · ¥45/50m'}
   ],
-  '饵': [
-    { text: '15g沉水铅笔', tag: '推荐' },
-    { text: '10g铁板' },
-    { text: '12g VIB' },
-    { text: '7g 小胖子' },
-    { text: '复合亮片 10g' },
+  bait:[
+    {val:'DUO Realis Pencil 110',spec:'沉水铅笔 · 15g · 110mm · ¥68',tag:'推荐'},
+    {val:'Smith Pure 10g',spec:'旋转亮片 · 10g · 银色 · ¥55'},
+    {val:'Megabass X-80 Trick Darter',spec:'米诺 · 10.6g · 80mm · ¥78'},
+    {val:'Rapala CD-7',spec:'沉水米诺 · 7g · 70mm · ¥42'},
+    {val:'Daiwa 月下美人 VIB 12g',spec:'VIB · 12g · 55mm · ¥38'},
+    {val:'O.S.P DoLive Stick 4.5寸',spec:'软饵 · 德州/Wacky · ¥35/6支'}
   ]
 };
 
-function openEquipModal(type) {
-  const modal = document.getElementById('equip-modal');
-  const title = document.getElementById('equip-modal-title');
-  const options = document.getElementById('equip-modal-options');
-  title.textContent = '选择' + type;
-  const items = equipOptions[type] || [];
-  options.innerHTML = items.map((item, i) => `
-    <div class="modal-option ${i === 0 ? 'selected' : ''}" onclick="selectEquipOption(this)">
+let currentEqType='';
+function openEqModal(type){
+  currentEqType=type;
+  const names={rod:'竿',reel:'轮',line:'线',bait:'饵'};
+  document.getElementById('eq-modal-title').textContent='选择'+names[type];
+  const items=eqOptions[type]||[];
+  document.getElementById('eq-modal-opts').innerHTML=items.map((it,i)=>`
+    <div class="modal-opt ${i===0?'sel':''}" onclick="selEqOpt(this,'${type}')">
       <div class="modal-radio"></div>
-      <span class="modal-option-text">${item.text}</span>
-      ${item.tag ? `<span class="modal-option-tag">${item.tag}</span>` : ''}
-    </div>
-  `).join('');
-  modal.classList.add('show');
+      <div><div class="modal-opt-text">${it.val}</div><div class="modal-opt-brand">${it.spec}</div></div>
+      ${it.tag?`<span class="modal-opt-tag">${it.tag}</span>`:''}
+    </div>`).join('');
+  document.getElementById('eq-modal').classList.add('show');
+}
+function selEqOpt(el,type){
+  el.parentElement.querySelectorAll('.modal-opt').forEach(o=>o.classList.remove('sel'));
+  el.classList.add('sel');
+  const val=el.querySelector('.modal-opt-text').textContent;
+  const spec=el.querySelector('.modal-opt-brand').textContent;
+  document.getElementById('eq-'+type+'-val').textContent=val;
+  document.getElementById('eq-'+type+'-spec').textContent=spec;
+  setTimeout(()=>closeEqModal(),200);
+}
+function closeEqModal(e){if(e&&e.target!==e.currentTarget)return;document.getElementById('eq-modal').classList.remove('show')}
+
+function switchMode(btn){
+  document.querySelectorAll('.mode-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
 }
 
-function selectEquipOption(el) {
-  el.parentElement.querySelectorAll('.modal-option').forEach(o => o.classList.remove('selected'));
-  el.classList.add('selected');
-  setTimeout(() => closeEquipModal(), 200);
+// City
+function openCity(){document.getElementById('city-modal').classList.add('show')}
+function closeCity(e){if(e&&e.target!==e.currentTarget)return;document.getElementById('city-modal').classList.remove('show')}
+function selCity(name,el){document.getElementById('city-name').textContent=name;document.querySelectorAll('.city-item').forEach(c=>c.classList.remove('sel'));el.classList.add('sel');closeCity()}
+
+// Expand
+function toggleExp(id){const s=document.getElementById(id);const b=s.querySelector('.exp-body');s.classList.toggle('open');b.style.maxHeight=s.classList.contains('open')?b.scrollHeight+'px':'0'}
+
+// Score
+function animateScore(score){
+  const ring=document.getElementById('sr-fill'),num=document.getElementById('score-num'),txt=document.getElementById('score-txt');
+  const circ=2*Math.PI*74,off=circ-(score/100)*circ;
+  let color,label;
+  if(score>=80){color='#34d399';label='非常适合出钓'}
+  else if(score>=60){color='#fbbf24';label='可以出钓'}
+  else if(score>=40){color='#fb923c';label='鱼口一般'}
+  else{color='#f87171';label='不建议出钓'}
+  ring.style.stroke=color;ring.style.strokeDashoffset=off;
+  num.style.color=color;txt.style.color=color;
+  let cur=0;const step=score/30;
+  const iv=setInterval(()=>{cur+=step;if(cur>=score){cur=score;clearInterval(iv)}num.textContent=Math.round(cur)},20);
+  txt.textContent=label;
+}
+function refreshBite(){
+  const btn=document.querySelector('#page-bite .hbtn:last-child');
+  btn.style.transform='rotate(360deg)';btn.style.transition='transform .5s';
+  setTimeout(()=>{btn.style.transform='';btn.style.transition=''},500);
+  animateScore(Math.floor(Math.random()*30)+65);
+  document.getElementById('up-time').textContent='刚刚更新';
 }
 
-function closeEquipModal(e) {
-  if (e && e.target !== e.currentTarget) return;
-  document.getElementById('equip-modal').classList.remove('show');
+// Spot detail
+const spotData=[
+  {name:'松山湖大桥',loc:'东莞市松山湖 · 大坝下游区域',catches:23,users:12,best:52,
+   equip:['竿：M调 7尺','轮：2500纺车','线：PE1号+碳前导3号','饵：15g沉水铅笔']},
+  {name:'彩虹桥',loc:'东莞市白山 · 彩虹桥下游200米',catches:15,users:8,best:38,
+   equip:['竿：ML调 6.6尺','轮：2000纺车','线：PE0.6号+碳前导2号','饵：5g旋转亮片']},
+  {name:'同沙水库北岸',loc:'东莞市同沙 · 北岸芦苇区',catches:8,users:5,best:42,
+   equip:['竿：M调 6.10尺','轮：2500纺车','线：PE0.8号+碳前导2.5号','饵：德州钓组3/16oz']},
+  {name:'东江石碣段',loc:'东莞市石碣 · 急流滩涂区域',catches:3,users:2,best:35,
+   equip:['竿：MH调 7.6尺','轮：3000纺车','线：PE1.5号+碳前导4号','饵：12g VIB']},
+  {name:'大王洲',loc:'东莞市运河 · 大王洲段深水区',catches:6,users:4,best:52,
+   equip:['竿：MH调 7.6尺','轮：3000纺车','线：PE1.5号+碳前导4号','饵：20g铁板']}
+];
+function openSpotDetail(idx){
+  const d=spotData[idx];
+  document.getElementById('sd-title').textContent=d.name;
+  document.getElementById('sd-name').textContent=d.name;
+  document.getElementById('sd-loc').textContent='📍 '+d.loc;
+  document.getElementById('sd-catches').textContent=d.catches;
+  document.getElementById('sd-users').textContent=d.users;
+  document.getElementById('sd-best').textContent=d.best;
+  document.querySelector('.spot-official-items').innerHTML=d.equip.map(e=>`<div class="spot-official-item">${e}</div>`).join('');
+  document.getElementById('comments-sec').style.display='none';
+  document.getElementById('spot-detail').classList.add('show');
+}
+function closeSpotDetail(){document.getElementById('spot-detail').classList.remove('show')}
+
+function toggleComments(el){
+  const sec=document.getElementById('comments-sec');
+  sec.style.display=sec.style.display==='none'?'block':'none';
+  if(sec.style.display==='block')sec.scrollIntoView({behavior:'smooth'});
 }
 
-// City modal
-function openCityModal() { document.getElementById('city-modal').classList.add('show'); }
-function closeCityModal(e) {
-  if (e && e.target !== e.currentTarget) return;
-  document.getElementById('city-modal').classList.remove('show');
-}
-function selectCity(name) {
-  document.getElementById('city-name').textContent = name;
-  document.querySelectorAll('.city-item').forEach(c => c.classList.remove('selected'));
-  event.target.classList.add('selected');
-  closeCityModal();
-}
-
-// Expand toggle
-function toggleExpand(id) {
-  const section = document.getElementById(id);
-  const body = section.querySelector('.expand-body');
-  section.classList.toggle('open');
-  if (section.classList.contains('open')) {
-    body.style.maxHeight = body.scrollHeight + 'px';
-  } else {
-    body.style.maxHeight = '0';
-  }
-}
-
-// Score animation
-function animateScore(score) {
-  const ring = document.getElementById('score-ring-fill');
-  const number = document.getElementById('score-number');
-  const label = document.getElementById('score-label');
-  const circumference = 2 * Math.PI * 78;
-  const offset = circumference - (score / 100) * circumference;
-
-  let color, text;
-  if (score >= 80) { color = '#34d399'; text = '非常适合出钓'; }
-  else if (score >= 60) { color = '#fbbf24'; text = '可以出钓'; }
-  else if (score >= 40) { color = '#fb923c'; text = '鱼口一般'; }
-  else { color = '#f87171'; text = '不建议出钓'; }
-
-  ring.style.stroke = color;
-  ring.style.strokeDashoffset = offset;
-  number.style.color = color;
-  label.style.color = color;
-
-  let current = 0;
-  const step = score / 30;
-  const interval = setInterval(() => {
-    current += step;
-    if (current >= score) { current = score; clearInterval(interval); }
-    number.textContent = Math.round(current);
-  }, 20);
-  label.textContent = text;
-}
-
-function refreshBiteData() {
-  const btn = document.querySelector('#page-bite .header-btn:last-child');
-  btn.style.transform = 'rotate(360deg)';
-  btn.style.transition = 'transform 0.6s';
-  setTimeout(() => { btn.style.transform = ''; btn.style.transition = ''; }, 600);
-  const score = Math.floor(Math.random() * 30) + 65;
-  animateScore(score);
-  document.getElementById('update-time').textContent = '刚刚更新';
+function sendComment(){
+  const input=document.getElementById('comment-input');
+  if(!input.value.trim())return;
+  const sec=document.getElementById('comments-sec');
+  sec.style.display='block';
+  const item=document.createElement('div');
+  item.className='comment-item';
+  item.innerHTML=`<div class="comment-top"><div class="comment-avatar">我</div><span class="comment-name">我</span><span class="comment-time">刚刚</span></div><div class="comment-text">${input.value}</div>`;
+  sec.appendChild(item);
+  input.value='';
+  item.scrollIntoView({behavior:'smooth'});
 }
 
 // Record detail
-const recordDetails = [
-  {
-    icon: '🐟', location: '松山湖大桥下游50米', date: '2026-04-27 16:30',
-    weather: '晴 24℃ 气压1012hPa', tags: ['翘嘴', '乱石底', '有倒树'],
-    bait: '15g沉水铅笔', catch: '翘嘴 45cm', release: true,
-    note: '中鱼时饵刚到底，小跳两下就炸口了。中鱼点在桥墩正下方偏左5米，水深约3米。傍晚窗口期，连续中了3条，最大这条45cm。'
-  },
-  {
-    icon: '🎣', location: '同沙水库北岸芦苇区', date: '2026-04-20 10:15',
-    weather: '多云 22℃ 气压1008hPa', tags: ['鲈鱼', '草区', '倒树'],
-    bait: '3/8oz德州钓组 · 绿南瓜色', catch: '鲈鱼 32cm', release: false,
-    note: '在芦苇边缘慢拖德州，第三竿就中了。鱼藏在倒树根部阴影里，水深1.5米左右。'
-  },
-  {
-    icon: '📷', location: '东江石碣段急流滩', date: '2026-04-15 17:00',
-    weather: '阴 20℃ 气压1015hPa', tags: ['翘嘴', '急流', '乱石底'],
-    bait: '12g VIB 银色', catch: '没有中鱼', release: false,
-    note: '试了VIB和铁板都没口，可能水温还没到。旁边台钓的也没什么鱼获，下次等水温上来再来试。'
-  },
-  {
-    icon: '🏆', location: '东莞运河大王洲段', date: '2026-04-10 06:30',
-    weather: '晴 18℃ 气压1020hPa', tags: ['翘嘴', '深水', '桥墩'],
-    bait: '20g铁板 银色', catch: '翘嘴 52cm', release: true,
-    note: '清晨6点半到的，铁板垂直搜底，第五竿中鱼！拉了两分钟才上来，52cm的大翘嘴。水深约6米，中鱼水层在底部1米。'
-  }
+const recData=[
+  {icon:'🐟',loc:'松山湖大桥下游50米',date:'2026-04-27 16:30',weather:'晴 24℃ 气压1012hPa',tags:['翘嘴','乱石底','有倒树'],bait:'DUO Realis Pencil 110 · 15g',catch:'翘嘴 45cm',rel:true,note:'中鱼时饵刚到底，小跳两下就炸口了。中鱼点在桥墩正下方偏左5米，水深约3米。傍晚窗口期连续中了3条。'},
+  {icon:'🎣',loc:'同沙水库北岸芦苇区',date:'2026-04-20 10:15',weather:'多云 22℃ 气压1008hPa',tags:['鲈鱼','草区','倒树'],bait:'O.S.P DoLive Stick 4.5寸 · 德州',catch:'鲈鱼 32cm',rel:false,note:'在芦苇边缘慢拖德州，第三竿就中了。鱼藏在倒树根部阴影里。'},
+  {icon:'📷',loc:'东江石碣段急流滩',date:'2026-04-15 17:00',weather:'阴 20℃ 气压1015hPa',tags:['翘嘴','急流','乱石底'],bait:'Daiwa月下美人VIB 12g',catch:'没有中鱼',rel:false,note:'试了VIB和铁板都没口，可能水温还没到。下次等水温上来再试。'},
+  {icon:'🏆',loc:'东莞运河大王洲段',date:'2026-04-10 06:30',weather:'晴 18℃ 气压1020hPa',tags:['翘嘴','深水','桥墩'],bait:'Smith Pure铁板 20g 银色',catch:'翘嘴 52cm',rel:true,note:'清晨6点半到的，铁板垂直搜底，第五竿中鱼！拉了两分钟才上来。水深约6米，中鱼水层在底部1米。'}
 ];
-
-function openRecordDetail(idx) {
-  const d = recordDetails[idx];
-  const page = document.getElementById('detail-page');
-  document.getElementById('detail-photo').textContent = d.icon;
-  document.getElementById('detail-location').textContent = d.location;
-  document.getElementById('detail-date').textContent = '📅 ' + d.date;
-  document.getElementById('detail-weather').textContent = '🌤️ ' + d.weather;
-  document.getElementById('detail-tags').innerHTML = d.tags.map(t => `<span class="record-tag">#${t}</span>`).join('');
-  document.getElementById('detail-bait').textContent = d.bait;
-  document.getElementById('detail-catch').textContent = d.catch;
-  document.getElementById('detail-release').style.display = d.release ? '' : 'none';
-  document.getElementById('detail-note').textContent = d.note;
-  page.classList.add('show');
+function openRecDetail(idx){
+  const d=recData[idx],pg=document.getElementById('rec-detail');
+  document.getElementById('rd-photo').textContent=d.icon;
+  document.getElementById('rd-loc').textContent=d.loc;
+  document.getElementById('rd-date').textContent='📅 '+d.date;
+  document.getElementById('rd-weather').textContent='🌤️ '+d.weather;
+  document.getElementById('rd-tags').innerHTML=d.tags.map(t=>`<span class="rec-tag">#${t}</span>`).join('');
+  document.getElementById('rd-bait').textContent=d.bait;
+  document.getElementById('rd-catch').textContent=d.catch;
+  document.getElementById('rd-release').style.display=d.rel?'':'none';
+  document.getElementById('rd-note').textContent=d.note;
+  pg.classList.add('show');
 }
-function closeDetail() { document.getElementById('detail-page').classList.remove('show'); }
+function closeRecDetail(){document.getElementById('rec-detail').classList.remove('show')}
 
-// New record
-function openNewRecord() { document.getElementById('new-record-page').classList.add('show'); }
-function closeNewRecord() { document.getElementById('new-record-page').classList.remove('show'); }
-
-function toggleFormTag(el) { el.classList.toggle('selected'); }
-
-function toggleCheckbox(id) {
-  document.getElementById(id).classList.toggle('checked');
+function openNewRec(){document.getElementById('new-rec-pg').classList.add('show')}
+function closeNewRec(){document.getElementById('new-rec-pg').classList.remove('show')}
+function toggleCb(id){document.getElementById(id).classList.toggle('checked')}
+function toggleNoFish(){
+  const cb=document.getElementById('nf-cb');cb.classList.toggle('checked');
+  const si=document.getElementById('fs-input'),rc=document.getElementById('rel-cb');
+  if(cb.classList.contains('checked')){si.disabled=true;si.style.opacity='.3';rc.parentElement.style.opacity='.3';rc.parentElement.style.pointerEvents='none'}
+  else{si.disabled=false;si.style.opacity='1';rc.parentElement.style.opacity='1';rc.parentElement.style.pointerEvents=''}
 }
-
-function toggleNoFish() {
-  const cb = document.getElementById('nofish-cb');
-  cb.classList.toggle('checked');
-  const sizeInput = document.getElementById('fish-size-input');
-  const releaseCb = document.getElementById('release-cb');
-  if (cb.classList.contains('checked')) {
-    sizeInput.disabled = true;
-    sizeInput.style.opacity = '0.3';
-    releaseCb.parentElement.style.opacity = '0.3';
-    releaseCb.parentElement.style.pointerEvents = 'none';
-  } else {
-    sizeInput.disabled = false;
-    sizeInput.style.opacity = '1';
-    releaseCb.parentElement.style.opacity = '1';
-    releaseCb.parentElement.style.pointerEvents = '';
-  }
+function saveRec(){
+  const btn=document.querySelector('.save-btn');
+  btn.textContent='✓ 已保存';btn.style.background='rgba(52,211,153,0.15)';btn.style.color='#34d399';
+  setTimeout(()=>{btn.textContent='保存记录';btn.style.background='';btn.style.color='';closeNewRec()},800);
 }
 
-function saveRecord() {
-  const btn = document.querySelector('.save-btn');
-  btn.textContent = '✓ 已保存';
-  btn.style.background = 'rgba(52,211,153,0.2)';
-  btn.style.color = '#34d399';
-  setTimeout(() => {
-    btn.textContent = '保存记录';
-    btn.style.background = '';
-    btn.style.color = '';
-    closeNewRecord();
-  }, 1000);
-}
-
-// Set today's date
-const now = new Date();
-const weekdays = ['日', '一', '二', '三', '四', '五', '六'];
-document.getElementById('date-display').textContent =
-  `${now.getFullYear()}年${now.getMonth()+1}月${now.getDate()}日 周${weekdays[now.getDay()]}`;
-
-// Init score animation
-setTimeout(() => animateScore(87), 300);
+// Init
+const now=new Date(),wd=['日','一','二','三','四','五','六'];
+document.getElementById('date-disp').textContent=`${now.getFullYear()}年${now.getMonth()+1}月${now.getDate()}日 周${wd[now.getDay()]}`;
+setTimeout(()=>animateScore(87),300);
 </script>
-
 </body>
 </html>
